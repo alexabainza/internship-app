@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import Navbar from './components/Navbar'
-import Login from './pages/Login'
+import Login from './pages/credentials/Login'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import FilterAhead from './pages/FilterAhead'
+import Landing from './pages/credentials/Landing'
 
 
 
@@ -13,9 +15,11 @@ function App() {
 
       <Routes>
         <Route path="/login" element={<Login/>}></Route>
+        <Route path="/filter" element={<FilterAhead/>}></Route>
+        <Route path="/landing" element={<Landing/>}></Route>
+
       </Routes>
     </BrowserRouter>
-     <h1 className='text-red-700 text-2xl'>hii</h1>
     </>
   )
 }
