@@ -4,7 +4,7 @@ import logo from "../assets/Carbs.svg";
 
 const Navbar = () => {
   return (
-    <nav class="bg-gradient-to-br from-[#074666] to-[#0B0027]  fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600 px-8 lg:px-32 md:px-16 sm:px-4">
+    <header class="bg-gradient-to-br from-[#074666] to-[#0B0027]  fixed w-full border-b z-20 border-gray-200 dark:border-gray-600 px-8 lg:px-32 md:px-16 sm:px-4">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-4">
         <Link
           to="/landing"
@@ -25,7 +25,7 @@ const Navbar = () => {
           </Link>
          </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
