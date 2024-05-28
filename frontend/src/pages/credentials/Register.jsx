@@ -40,6 +40,7 @@ const Register = () => {
       }
       setIsLoading(false);
       setError(null);
+      navigate("/filter");
     } catch (error) {
       setIsLoading(false);
       setError(error.message);
