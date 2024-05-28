@@ -3,8 +3,8 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/credentials/Login";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import FilterAhead from "./pages/FilterAhead";
-import Landing from "./pages/credentials/Landing";
-import Results from "./pages/results/Results";
+import Landing from "./pages/Landing";
+import Results from "./pages/intern-side/Results";
 import Register from "./pages/credentials/Register";
 
 function App() {
