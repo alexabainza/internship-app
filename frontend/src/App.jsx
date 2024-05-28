@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import FilterAhead from "./pages/FilterAhead";
 import Landing from "./pages/credentials/Landing";
 import Results from "./pages/results/Results";
+import Register from "./pages/credentials/Register";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
 
         <Routes>
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/register" element={<Register />}></Route>
           <Route path="/filter" element={<FilterAhead />}></Route>
           <Route path="/" element={<Landing />}></Route>
           <Route path="/results" element={<Results />}></Route>

@@ -4,17 +4,53 @@ import Divider from "../../components/Divider";
 import { Link } from "react-router-dom";
 import { SocialIcon } from "react-social-icons";
 
-const Login = () => {
+const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setError(data.message);
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(false);
+      setError(null);
+    } catch (error) {
+      setIsLoading(false);
+      setError(error.message);
+    }
+  };
+
   return (
     <section class="lg:mt-12 md:mt-16 sm:mt-20 mt-20">
       <div class="flex flex-col items-center justify-center mx-auto sm:px-4 px-4">
         <div class=" lg:w-1/4 md:w-1/2 sm:w-full w-full bg-white rounded-lg py-4 px-2 shadow border-red-600">
-          <div class="space-y-4 md:space-y-6 sm:p-8">
+          <div class="space-y-4 md:space-y-6 p-4">
             <div class="flex flex-col items-center justify-center ">
               <img
                 class="flex items-center mr-2 h-15 w-15"
@@ -22,10 +58,10 @@ const Login = () => {
                 alt="logo"
               />
               <p class="text-center  font-semibold leading-tight tracking-tight text-gray-900 text-xl">
-                Login first to continue
+                Register first to continue
               </p>
             </div>
-            <form class="space-y-4 md:space-y-6" action="#">
+            <form class="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
                   for="email"
@@ -37,9 +73,27 @@ const Login = () => {
                   type="email"
                   name="email"
                   id="email"
+                  onChange={handleChange}
                   class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
-                  required=""
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="email"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your username
+                </label>
+                <input
+                  type="textl"
+                  name="username"
+                  id="username"
+                  onChange={handleChange}
+                  class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="username"
+                  required
                 />
               </div>
               <div>
@@ -53,9 +107,10 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   id="password"
+                  onChange={handleChange}
                   placeholder="••••••••"
                   class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required=""
+                  required
                 />
                 <button
                   type="button"
@@ -90,30 +145,20 @@ const Login = () => {
                   )}
                 </button>
               </div>
-              <div class="flex items-center justify-between my-1">
-                <div class="flex items-start"></div>
-                <a
-                  href="#"
-                  class="text-blue-600 text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
-              <Link
-                to="/filter"
-                type="submit"
+              <button
+                disabled={isLoading}
                 class="w-full my-0 text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Sign in
-              </Link>
+                {isLoading ? "Loading..." : "Sign in "}{" "}
+              </button>
               <Divider />
               <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
+                Already have an account?{" "}
                 <Link
-                  to="/register"
+                  to="/login"
                   class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
-                  Sign up
+                  Login here
                 </Link>
               </p>
             </form>
@@ -122,6 +167,7 @@ const Login = () => {
               <SocialIcon network="google" />
               <SocialIcon network="linkedin" />
             </div>
+            {error && <p className="text-red-500 mt-5">{error}</p>}
           </div>
         </div>
       </div>
@@ -129,4 +175,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
