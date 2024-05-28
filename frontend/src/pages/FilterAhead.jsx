@@ -5,7 +5,7 @@ import { FaFilter, FaLocationArrow, FaBuilding } from "react-icons/fa";
 import person from "../assets/persontyping.jpg";
 const FilterAhead = () => {
   return (
-    <div className="mt-16 flex flex-row max-h-screen bg-white justify-center">
+    <div className="bg-[#f7f7f7] lg:mt-20 md:mt-24 sm:mt-28 mt-28 min-h-screen md:gap-8 sm:gap-8 gap-8 flex lg:px-24 md:px-20 sm:px-8 px-8 lg:flex-row md:flex-row sm:flex-col flex-col">
       <div className="pt-10 w-1/2 flex flex-col gap-10 items-center">
         <h1 className="text-[#30526A] text-center text-5xl ">
           Let's find internship opportunities near you!
@@ -96,7 +96,8 @@ const FilterAhead = () => {
             <Dropdown.Item>Not Paid</Dropdown.Item>
           </Dropdown>
 
-          <Link to="/results"
+          <Link
+            to="/results"
             style={{ width: "100%" }}
             type="button"
             class="text-white bg-[#5CDB5C] hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"

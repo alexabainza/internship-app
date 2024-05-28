@@ -11,10 +11,12 @@ import {
   FaPeopleArrows,
   FaSchool,
 } from "react-icons/fa";
+import { ThemeProvider } from "styled-components";
+import { lightTheme, darkTheme } from "../../styles/theme";
 
 const Results = () => {
   return (
-    <div className="pt-16 min-h-screen w-full flex flex-row">
+    <div className="pt-16 min-h-screen w-full flex lg:flex-row sm:flex-col flex-col">
       <div className="pt-10 px-10 bg-white w-1/3 overflow-y-auto custom-scrollbar">
         <form class="max-w-screen mx-auto" style={{ width: "100%" }}>
           <div class="relative">
@@ -102,7 +104,6 @@ const Results = () => {
           <JobResults />
           <JobResults />
         </div>
-
       </div>
       <div className="bg-white text-slate-800 w-2/3 p-16 flex flex-col overflow-y-auto custom-scrollbar">
         <h1 className="text-5xl font-semibold mb-3 text-[#056480]">
@@ -124,7 +125,9 @@ const Results = () => {
           </div>
         </div>
         <div>
-          <p className="font-semibold text-xl mb-2 text-[#056480]">Role Description</p>
+          <p className="font-semibold text-xl mb-2 text-[#056480]">
+            Role Description
+          </p>
           <p className="my-5">
             Quo eros gravida suscipit class totam aptent voluptas culpa!
             Suspendisse! Eaque risus, sed suscipit? Incididunt aptent orci
@@ -172,7 +175,9 @@ const Results = () => {
             eos itaque sagittis? Phasellus placeat quasi fugit incidunt iaculis
             gravida qui.
           </p>
-          <p className="font-semibold text-xl my-5 text-[#056480]">Requirements</p>
+          <p className="font-semibold text-xl my-5 text-[#056480]">
+            Requirements
+          </p>
           <ul className="list-disc ml-6 mt-2">
             {" "}
             {/* Apply appropriate margin and list style */}
@@ -189,7 +194,9 @@ const Results = () => {
               animi! Natus, pharetra natus per semper delectus, tempore.
             </li>
           </ul>
-          <p className="font-semibold text-xl my-5 text-[#056480]">About the Company</p>
+          <p className="font-semibold text-xl my-5 text-[#056480]">
+            About the Company
+          </p>
           <p>
             Quo eros gravida suscipit class totam aptent voluptas culpa!
             Suspendisse! Eaque risus, sed suscipit? Incididunt aptent orci

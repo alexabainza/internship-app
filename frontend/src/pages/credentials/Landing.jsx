@@ -4,45 +4,45 @@ import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
-    <div className="mt-16 md:w-full flex xl:flex-row lg:flex-row md:flex-col sm:flex-col min-h-screen">
-
-        <div className="lg:w-1/2 md:w-full sm:w-full md:px-16 lg:m-32 md:m-16 sm:m-4 flex flex-col text-white gap-6">
-          <h1 className="text-3xl md:text-5xl lg:text-7xl font-semibold">
+    <div className="lg:mt-20 md:mt-24 sm:mt-28 mt-28 min-h-screen md:gap-8 sm:gap-8 gap-8 flex lg:mx-24 md:mx-20 sm:mx-8 mx-8 lg:flex-row md:flex-row sm:flex-col flex-col">
+      <div className="flex flex-col text-white gap-6 justify-center items-center  lg:w-3/5 md:w-full sm:w-full w-full">
+        <div className="flex flex-col gap-8">
+          <h1 className="lg:text-7xl md:text-5xl sm:text-3xl text-3xl font-semibold ">
             An internship page just for you.
           </h1>
-          <p className="text-lg md:text-xl lg:text-2xl">
-            All you see are job hunting pages? How about an internship hunting
-            page? Find internship opportunities available and suited for you,
-            all in this internship hunting page.
+          <p className="lg:text-2xl md:text-xl sm:text-lg">
+            Find internship opportunities available and suited for you, all in
+            this internship hunting page.
             <br />
             <br />
             Click on one of the buttons below to get started.
           </p>
 
-          <div className="flex flex-wrap">
-            {" "}
-            {/* Added flex-wrap */}
+          <div className="flex flex-wrap gap-4 ">
             <Link
               to="/login"
               type="button"
-              class="text-white text-center lg:w-1/4 md:w-3/4 sm:w-3/4  bg-[#73d473] hover:bg-[#3adb3a]  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 min-w-[200px]"
+              class="text-[#356d35] text-center bg-[#89ff89] hover:bg-[#73d473] lg:w-[40%] sm:w-full w-full font-bold rounded-lg lg:text-lg md:text-md sm:text-sm text-sm px-5 lg:py-3 md:py-2.5 sm:py-2 py-2"
             >
-              I am a student
+              I AM A STUDENT
             </Link>
             <button
               type="button"
-              class="text-white text-center lg:w-1/4 md:w-3/4 sm:w-3/4  bg-[#73d473] hover:bg-[#3adb3a]  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 min-w-[200px]"
+              class="text-[#356d35] text-center bg-[#89ff89] hover:bg-[#73d473] lg:w-[40%] sm:w-full w-full font-bold rounded-lg lg:text-lg md:text-md sm:text-sm text-sm px-5 lg:py-3 md:py-2.5 sm:py-2 py-2"
             >
-              I am an employer
+              I AM AN EMPLOYER
             </button>
           </div>
         </div>
-        <div className="lg:w-1/3 md:w-1/2  pt-10 self-center">
-          {" "}
-          {/* Adjusted image container width */}
-          <img src={landing}></img>
-        </div>
       </div>
+      <div className="flex justify-center items-center lg:w-2/5 md:w-full sm:w-full w-full">
+        {" "}
+        <img
+          src={landing}
+          className="lg:h-[75%] md:h-[50%] sm:h-[20%] h-[20%]"
+        ></img>
+      </div>
+    </div>
   );
 };
 
