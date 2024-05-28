@@ -6,6 +6,7 @@ import FilterAhead from "./pages/FilterAhead";
 import Landing from "./pages/Landing";
 import Results from "./pages/intern-side/Results";
 import Register from "./pages/credentials/Register";
+import AboutCompany from "./pages/company-side/AboutCompany";
 
 function App() {
   return (
@@ -14,11 +15,12 @@ function App() {
         <Navbar />
 
         <Routes>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/filter" element={<FilterAhead />}></Route>
-          <Route path="/" element={<Landing />}></Route>
-          <Route path="/results" element={<Results />}></Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/filter" element={<FilterAhead />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/aboutcompany" element={<AboutCompany />} />
+          <Route path="/results" element={<Results />} />
         </Routes>
       </BrowserRouter>
     </>

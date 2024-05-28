@@ -1,7 +1,7 @@
 // theme.js
 export const lightTheme = {
-  primary: "#6200ee",
-  secondary: "#03dac6",
+  primary: "#056480",
+  secondary: "#30526A",
   background: "#ffffff",
   text: "#000000",
 };
