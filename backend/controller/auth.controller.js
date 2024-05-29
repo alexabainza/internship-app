@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
+import Company from "../models/company.model.js";
 
 export const register = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -33,5 +34,29 @@ export const login = async (req, res, next) => {
       .json(userInfo);
   } catch (error) {
     next(error);
+  }
+};
+
+export const registerCompany = async (req, res, next) => {
+  const {
+    company_name,
+    company_address,
+    company_email,
+    company_contact_no,
+    password,
+  } = req.body;
+  const hashedPassword = bcryptjs.hashSync(password, 10);
+  const newCompany = new Company({
+    company_name,
+    company_address,
+    company_email,
+    company_contact_no,
+    password: hashedPassword,
+  });
+  try {
+    await newCompany.save();
+    res.status(201).json("Company created successfully!");
+  } catch (error) {
+    next(errorHandler(550, "Error registering company"));
   }
 };

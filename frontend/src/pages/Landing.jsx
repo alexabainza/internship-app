@@ -26,12 +26,13 @@ const Landing = () => {
             >
               I AM A STUDENT
             </Link>
-            <button
+            <Link
+              to="/company-registration"
               type="button"
               class="text-[#356d35] text-center bg-[#89ff89] hover:bg-[#73d473] lg:w-[40%] sm:w-full w-full font-bold rounded-lg lg:text-lg md:text-md sm:text-sm text-sm px-5 lg:py-3 md:py-2.5 sm:py-2 py-2"
             >
               I AM AN EMPLOYER
-            </button>
+            </Link>
           </div>
         </div>
       </div>

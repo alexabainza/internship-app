@@ -3,8 +3,10 @@ import logo from "../../assets/Carbs.svg";
 import Divider from "../../components/Divider";
 import { Link } from "react-router-dom";
 import { SocialIcon } from "react-social-icons";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
