@@ -1,63 +1,74 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Stepper from "../../components/Stepper";
 import StepperControl from "../../components/StepperControl";
-import Account from "../../components/steps/Account";
-import Details from "../../components/steps/Details";
-import Payment from "../../components/steps/Payment";
-import Final from "../../components/steps/Final";
+import CompanyInformation from "../../components/steps/CompanyInformation";
+import PostingGuidelines from "../../components/steps/PostingGuidelines";
+import CompanyProfile from "../../components/steps/CompanyProfile";
+import GeneralInformation from "../../components/steps/GeneralInformation";
 import { StepperContext } from "../../context/StepperContext";
+import JobDetails from "../../components/steps/JobDetails";
+import PostingPreview from "../../components/steps/PostingPreview";
 
 const CreatePost = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const steps = [
-    "Account Information",
-    "Personal Details",
-    "Payment",
-    "Complete",
+    "Company Information",
+    "Posting Guidelines",
+    "Company Profile",
+    "General Information",
+    "Job Details",
+    "Posting Preview",
   ];
   const [userData, setUserData] = useState("");
   const [finalData, setFinalData] = useState([]);
-  // will be used to determine which component to show depending on which step the person is in
+
   const displayStep = (step) => {
     switch (step) {
       case 1:
-        return <Account />;
+        return <CompanyInformation />;
       case 2:
-        return <Details />;
+        return <PostingGuidelines />;
       case 3:
-        return <Payment />;
+        return <CompanyProfile />;
       case 4:
-        return <Final />;
+        return <GeneralInformation />;
+      case 5:
+        return <JobDetails />;
+      case 6:
+        return <PostingPreview />;
       default:
     }
   };
+
   const handleClick = (direction) => {
     let newStep = currentStep;
     direction === "next" ? newStep++ : newStep--;
-    // check if the steps are within the bounds
+    // Check if the steps are within the bounds
     newStep > 0 && newStep <= steps.length && setCurrentStep(newStep);
   };
 
   return (
-    <div className="md:w-1/2 mx-auto shadow-xl rounded-2xl pb-2 bg-white pt-20">
-      <div className="container horizontal mt-5">
-        <Stepper steps={steps} currentStep={currentStep} />
-      </div>
-      {currentStep !== steps.length && (
-        <StepperControl
-          handleClick={handleClick}
-          currentStep={currentStep}
-          steps={steps}
-        />
-      )}
-
-      <div className="my-10 p-10">
-        <StepperContext.Provider
-          value={{ userData, setUserData, finalData, setFinalData }}
-        >
-          {displayStep(currentStep)}
-        </StepperContext.Provider>
+    <div className="pt-28 min-h-screen shadow-xl pb-2 bg-white lg:px-8 md:px-4 sm:px-2 px-2 overflow-auto">
+      <div className="container flex flex-row items-start gap-4">
+        <div className="lg:px-10 sm:px-4 px-4 lg:w-3/4 md:w-full sm:w-full">
+          <StepperContext.Provider
+            value={{ userData, setUserData, finalData, setFinalData }}
+          >
+            {displayStep(currentStep)}
+          </StepperContext.Provider>
+          <div className="">
+            {currentStep !== steps.length && (
+              <StepperControl
+                handleClick={handleClick}
+                currentStep={currentStep}
+                steps={steps}
+              />
+            )}
+          </div>
+        </div>
+        <div className="">
+          <Stepper steps={steps} currentStep={currentStep} />
+        </div>
       </div>
     </div>
   );

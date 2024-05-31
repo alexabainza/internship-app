@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-
 const Stepper = ({ steps, currentStep }) => {
   const [newStep, setNewStep] = useState([]);
   const stepRef = useRef();
+
   const updateStep = (stepNumber, steps) => {
     const newSteps = [...steps];
     let count = 0;
     while (count < newSteps.length) {
-      //current step
+      // Current step
       if (count === stepNumber) {
         newSteps[count] = {
           ...newSteps[count],
@@ -15,9 +15,8 @@ const Stepper = ({ steps, currentStep }) => {
           selected: true,
           completed: true,
         };
-        count++;
       }
-      //step completed
+      // Step completed
       else if (count < stepNumber) {
         newSteps[count] = {
           ...newSteps[count],
@@ -25,7 +24,6 @@ const Stepper = ({ steps, currentStep }) => {
           selected: true,
           completed: true,
         };
-        count++;
       } else {
         newSteps[count] = {
           ...newSteps[count],
@@ -33,15 +31,15 @@ const Stepper = ({ steps, currentStep }) => {
           selected: false,
           completed: false,
         };
-        count++;
       }
+      count++;
     }
     return newSteps;
   };
+
   useEffect(() => {
-    //will map through each element in the array
+    // Map through each element in the array
     const stepsState = steps.map((step, index) =>
-      //for each object a description will be set , also the others
       Object.assign(
         {},
         {
@@ -57,52 +55,44 @@ const Stepper = ({ steps, currentStep }) => {
     setNewStep(current);
   }, [steps, currentStep]);
 
-  const displaySteps = newStep.map((step, index) => {
-    return (
-      <div
-        key={index}
-        className={
-          index !== newStep.length - 1
-            ? "w-full flex items-center"
-            : "flex items-center"
-        }
-      >
-        <div className="relative flex flex-col items-center text-teal-600">
-          <div
-            className={`rounded-full transition-duration-500 ease-in-out border-2 border-gray-300 h-12 w-12 flex items-center justify-center py-3 ${
-              step.selected
-                ? "bg-green-600 text-white font-bold border border-green-600"
-                : ""
-            }`}
-          >
-            {step.completed ? (
-              <span className="text-white font-bold text-xl">&#10003;</span>
-            ) : (
-              index + 1
-            )}
-          </div>
-          <div
-            className={`absolute top-0 text-center mt-16 w-32 text-xs font-medium uppercase ${
-              step.highlighted ? "text-gray-900" : "text-gray-400"
-            }`}
-          >
-            {step.description}
-          </div>
-        </div>
-        {/* The display line */}
+  const displaySteps = newStep.map((step, index) => (
+    <div key={index} className="flex flex-col items-center  ">
+      <div className="relative flex items-center align-middle justify-center text-[#056480] font-bold text-">
         <div
-          className={`flex-auto border-t-2 transition duration-500 ease-in-out ${
-            step.completed ? "border-green-600" : "border-gray-300"
+          className={`rounded-full transition-duration-500 ease-in-out h-12 w-12 flex items-center justify-center py-3 ${
+            step.selected
+              ? "bg-[#056480] text-white font-bold"
+              : "bg-[#F4F4F4] text-[#056480]"
           }`}
-        ></div>
+        >
+          {step.completed ? (
+            <span className="text-white font-bold text-2xl">&#10003;</span>
+          ) : (
+            index + 1
+          )}
+        </div>
+        <div
+          className={`absolute top-2 left-16 text-md font-medium uppercase ${
+            step.highlighted ? "text-gray-900" : "text-gray-400"
+          }`}
+          style={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "200px", // adjust as needed
+          }}
+        >
+          {step.description}
+        </div>
       </div>
-    );
-  });
-
-  const handleClick = (direction) => {};
+      {index !== newStep.length - 1 && (
+        <div className="h-12 border-l-2 border-gray-300"></div>
+      )}
+    </div>
+  ));
 
   return (
-    <div className="mx-4 p-4 flex justify-between items-center">
+    <div className="flex flex-col items-start sm:block hidden">
       {displaySteps}
     </div>
   );
