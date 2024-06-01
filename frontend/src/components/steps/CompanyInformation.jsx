@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { StepperContext } from "../../context/StepperContext";
 import { lightTheme } from "../../styles/theme";
 import Dropdown from "../Dropdown";
-import { FaChevronCircleRight } from "react-icons/fa";
+
 const CompanyInformation = () => {
   const { userData, setUserData } = useContext(StepperContext);
   const handleChange = (e) => {
@@ -31,8 +31,8 @@ const CompanyInformation = () => {
     { label: "5000-10000 employees", value: "7" },
     { label: "10000+ employees", value: "8" },
   ];
-  const handleSelect = (option) => {
-    console.log("Selected option:", option);
+  const handleSelect = (name, option) => {
+    setUserData({ ...userData, [name]: option.label });
   };
   return (
     <div className="flex flex-col">
@@ -60,6 +60,7 @@ const CompanyInformation = () => {
                 value={userData["first_name"] || ""}
                 name="first_name"
                 placeholder="First Name"
+                required
                 className="p-1 px-2 appearance-none outline-none w-full text-gray-800"
               />
             </div>
@@ -74,6 +75,7 @@ const CompanyInformation = () => {
                 value={userData["last_name"] || ""}
                 name="last_name"
                 placeholder="Last Name"
+                required
                 className="p-1 px-2 appearance-none outline-none w-full text-gray-800"
               />
             </div>
@@ -91,6 +93,7 @@ const CompanyInformation = () => {
                 name="email"
                 placeholder="sample@gmail.com"
                 type="email"
+                required
                 className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
               />
             </div>
@@ -105,6 +108,7 @@ const CompanyInformation = () => {
                 value={userData["contact_no"] || ""}
                 name="contact_no"
                 placeholder="0xxxxxxxxxx"
+                required
                 className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
               />
             </div>
@@ -128,6 +132,7 @@ const CompanyInformation = () => {
               value={userData["company_name"] || ""}
               name="company_name"
               placeholder="Company Name"
+              required
               className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
             />
           </div>
@@ -136,13 +141,19 @@ const CompanyInformation = () => {
           <div className="font-bold h-6  text-gray-500 text-xs leading-8 uppercase mb-1">
             Industry
           </div>
-          <Dropdown options={industry} onSelect={handleSelect} />
+          <Dropdown
+            options={industry}
+            onSelect={(option) => handleSelect("industry", option)}
+          />
         </div>
         <div className="flex flex-col mb-1">
           <div className="font-bold h-6  text-gray-500 text-xs leading-8 uppercase mb-1">
             Company Size
           </div>
-          <Dropdown options={companySize} onSelect={handleSelect} />
+          <Dropdown
+            options={companySize}
+            onSelect={(option) => handleSelect("company_size", option)}
+          />
         </div>
         <div className="flex flex-col">
           <div className="font-bold h-6  text-gray-500 text-xs leading-8 uppercase">
@@ -154,6 +165,7 @@ const CompanyInformation = () => {
               value={userData["company_address"] || ""}
               name="company_address"
               placeholder="Company Address"
+              required
               className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
             />
           </div>

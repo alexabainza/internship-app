@@ -57,13 +57,11 @@ const CreatePost = () => {
             {displayStep(currentStep)}
           </StepperContext.Provider>
           <div className="">
-            {currentStep !== steps.length && (
-              <StepperControl
-                handleClick={handleClick}
-                currentStep={currentStep}
-                steps={steps}
-              />
-            )}
+            <StepperControl
+              handleClick={handleClick}
+              currentStep={currentStep}
+              steps={steps}
+            />
           </div>
         </div>
         <div className="">

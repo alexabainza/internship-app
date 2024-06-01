@@ -35,6 +35,7 @@ const CompanyProfile = () => {
               value={userData["company_description"] || ""}
               name="company_description"
               placeholder="Enter company description here"
+              required
               className="p-1 px-2 appearance-none border-none outline-none w-full text-gray-800"
               rows="6"
             />
@@ -64,6 +65,7 @@ const CompanyProfile = () => {
               value={userData["company_website"] || ""}
               name="company_website"
               placeholder="Enter company website here"
+              required
               className="p-1 px-2 appearance-none border-none outline-none w-full text-gray-800"
             />
           </div>
