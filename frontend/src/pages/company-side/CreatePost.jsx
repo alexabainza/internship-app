@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import Stepper from "../../components/Stepper";
 import StepperControl from "../../components/StepperControl";
-import CompanyInformation from "../../components/steps/CompanyInformation";
-import PostingGuidelines from "../../components/steps/PostingGuidelines";
-import CompanyProfile from "../../components/steps/CompanyProfile";
-import GeneralInformation from "../../components/steps/GeneralInformation";
+import CompanyInformation from "../../components/steps/1_CompanyInformation";
+import PostingGuidelines from "../../components/steps/2_PostingGuidelines";
+import CompanyProfile from "../../components/steps/3_CompanyProfile";
+import GeneralInformation from "../../components/steps/4_GeneralInformation";
 import { StepperContext } from "../../context/StepperContext";
-import JobDetails from "../../components/steps/JobDetails";
-import PostingPreview from "../../components/steps/PostingPreview";
+import JobDetails from "../../components/steps/5_JobDetails";
+import PostingPreview from "../../components/steps/6_PostingPreview";
 
 const CreatePost = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -19,7 +19,8 @@ const CreatePost = () => {
     "Job Details",
     "Posting Preview",
   ];
-  const [userData, setUserData] = useState("");
+  const [userData, setUserData] = useState([]);
+
   const [finalData, setFinalData] = useState([]);
 
   const displayStep = (step) => {

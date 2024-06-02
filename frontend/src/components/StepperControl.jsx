@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { lightTheme } from "../styles/theme";
 const StepperControl = ({ handleClick, currentStep, steps }) => {
   return (
