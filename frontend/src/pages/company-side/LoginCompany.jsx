@@ -2,22 +2,14 @@ import React, { useState } from "react";
 import logo from "../../assets/Carbs.svg";
 import Divider from "../../components/Divider";
 import { Link } from "react-router-dom";
-import { SocialIcon } from "react-social-icons";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
-} from "../../redux/user/userSlice";
 
-const Login = () => {
+const LoginCompany = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { loading, error } = useSelector((state) => state.user);
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -33,8 +25,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      dispatch(signInStart());
-      const res = await fetch("/api/auth/login", {
+      setIsLoading(true);
+      const res = await fetch("/api/auth/company-login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,13 +35,17 @@ const Login = () => {
       });
       const data = await res.json();
       if (data.success === false) {
-        dispatch(signInFailure(data.message));
+        setError(data.message);
+        setIsLoading(false);
         return;
       }
-      dispatch(signInSuccess(data));
+      login(data);
+      setIsLoading(false);
       navigate("/filter");
+      setError(null);
     } catch (error) {
-      dispatch(signInFailure(error.message));
+      setIsLoading(false);
+      setError(error.message);
     }
   };
   return (
@@ -64,7 +60,7 @@ const Login = () => {
                 alt="logo"
               />
               <p class="text-center  font-semibold leading-tight tracking-tight text-gray-900 text-xl">
-                Login first to continue
+                Login as a company
               </p>
             </div>
             <form class="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
@@ -73,14 +69,14 @@ const Login = () => {
                   for="email"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Your email
+                  Company email
                 </label>
                 <input
                   type="email"
-                  name="email"
-                  id="email"
+                  name="company_email"
+                  id="company_email"
                   class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
+                  placeholder="companyname@company.com"
                   required=""
                   onChange={handleChange}
                 />
@@ -90,7 +86,7 @@ const Login = () => {
                   for="password"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Password
+                  Company Password
                 </label>
                 <input
                   type={showPassword ? "text" : "password"}
@@ -154,18 +150,13 @@ const Login = () => {
               <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
                 <Link
-                  to="/register"
+                  to="/company-registration"
                   class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Sign up
                 </Link>
               </p>
             </form>
-            <div className="flex flex-row gap-10 justify-center">
-              <SocialIcon network="facebook" />
-              <SocialIcon network="google" />
-              <SocialIcon network="linkedin" />
-            </div>
           </div>
         </div>
       </div>
@@ -173,4 +164,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginCompany;

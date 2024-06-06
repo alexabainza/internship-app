@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "../../assets/Carbs.svg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterCompany = () => {
   const navigate = useNavigate();
@@ -186,6 +186,15 @@ const RegisterCompany = () => {
             Sign in
           </button>
         </form>
+        <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+          Already have an account?{" "}
+          <Link
+            to="/company-login"
+            class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+          >
+            Login here
+          </Link>
+        </p>
       </div>
     </section>
   );

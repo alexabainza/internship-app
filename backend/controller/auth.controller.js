@@ -23,7 +23,10 @@ export const login = async (req, res, next) => {
     if (!validUser) return next(errorHandler(404, "User not found"));
     const validPassword = bcryptjs.compare(password, validUser.password);
     if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    const token = jwt.sign(
+      { id: validUser._id, role: validUser.role },
+      process.env.JWT_SECRET
+    );
     const { password: pass, ...userInfo } = validUser._doc;
 
     res
@@ -58,5 +61,29 @@ export const registerCompany = async (req, res, next) => {
     res.status(201).json("Company created successfully!");
   } catch (error) {
     next(errorHandler(550, "Error registering company"));
+  }
+};
+
+export const loginCompany = async (req, res, next) => {
+  const { company_email, password } = req.body;
+  try {
+    const validCompany = await Company.findOne({ company_email });
+    if (!validCompany) return next(errorHandler(404, "Company not found"));
+    const validPassword = bcryptjs.compare(password, validCompany.password);
+    if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
+    const token = jwt.sign(
+      { id: validCompany._id, role: validUser.role },
+      process.env.JWT_SECRET
+    );
+    const { password: pass, ...companyInfo } = validCompany._doc;
+
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .status(200)
+      .json(companyInfo);
+  } catch (error) {
+    next(error);
   }
 };

@@ -17,11 +17,15 @@ const companySchema = new mongoose.Schema(
     company_contact_no: {
       type: String,
       required: true,
-      maxlength: 11,
-      minlength: 11,
     },
     password: {
       type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["Company"],
+      default: "Company",
       required: true,
     },
   },

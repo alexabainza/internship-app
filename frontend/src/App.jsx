@@ -9,6 +9,8 @@ import Register from "./pages/credentials/Register";
 import AboutCompany from "./pages/company-side/AboutCompany";
 import RegisterCompany from "./pages/company-side/RegisterCompany";
 import CreatePost from "./pages/company-side/CreatePost";
+import LoginCompany from "./pages/company-side/LoginCompany";
+// import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   return (
@@ -23,8 +25,9 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/aboutcompany" element={<AboutCompany />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/filter" element={<FilterAhead />} />{" "}
           <Route path="/create-post" element={<CreatePost />} />
-
+          <Route path="/company-login" element={<LoginCompany />} />
           <Route path="/company-registration" element={<RegisterCompany />} />
         </Routes>
       </BrowserRouter>
