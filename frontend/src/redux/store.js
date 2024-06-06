@@ -2,21 +2,31 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./user/userSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
-const rootReducer = combineReducers({
-  user: userReducer,
-});
+import { logout } from "./user/userSlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  version: 1,
+  whitelist: ["user"], // List the reducers you want to persist
 };
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-export const store = configureStore({
-  reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
+
+const appReducer = combineReducers({
+  user: userReducer,
 });
-export const persistor = persistStore(store);
+
+const rootReducer = (state, action) => {
+  if (action.type === logout.type) {
+    state = undefined;
+  }
+  return appReducer(state, action);
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+const store = configureStore({
+  reducer: persistedReducer,
+});
+
+const persistor = persistStore(store);
+
+export { store, persistor };

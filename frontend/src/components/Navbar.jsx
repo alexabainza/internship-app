@@ -1,15 +1,32 @@
 import React, { useState } from "react";
 import icon from "../assets/Carbs.svg";
-import { Link, useLocation } from "react-router-dom";
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../src/redux/user/userSlice";
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
   const location = useLocation();
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
+  const handleLogout = async () => {
+    console.log("logout button clicked");
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      dispatch(logout());
+      navigate("/login");
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    }
+  };
   return (
     <nav className="bg-gradient-to-br from-[#074666] to-[#0B0027] fixed w-full z-20 top-0 start-0 border-b-2 border-b-gray-500 border-gray-">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -54,7 +71,50 @@ function Navbar() {
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-light border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
             <li>
-              <Link
+              {currentUser ? (
+                <button className="text-white" onClick={handleLogout}>
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to="/filter"
+                  className={`block py-2 px-3 text-sm text-white rounded 
+                  ${
+                    location.pathname === "/filter" ? "active" : ""
+                  } hover:text-[#97EFE9]`}
+                  aria-current="page"
+                >
+                  filter.
+                </Link>
+              )}
+            </li>
+            <li>
+              {currentUser ? (
+                <div className=""></div>
+              ) : (
+                <Link
+                  to="/results"
+                  className={`block py-2 px-3 text-sm text-white rounded 
+                  ${
+                    location.pathname === "results" ? "active" : ""
+                  } hover:text-[#97EFE9]`}
+                  aria-current="page"
+                >
+                  results.
+                </Link>
+              )}
+            </li>
+            <li>
+              <Link to="/login">
+                {currentUser ? (
+                  <p className="text-white">{currentUser.username}</p>
+                ) : (
+                  <p className="`block py-2 px-3 text-sm text-white rounded ">
+                    login
+                  </p>
+                )}
+              </Link>
+              {/* <Link
                 to="/login"
                 className={`block py-2 px-3 text-sm text-white rounded 
                   ${
@@ -63,31 +123,7 @@ function Navbar() {
                 aria-current="page"
               >
                 login.
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/filter"
-                className={`block py-2 px-3 text-sm text-white rounded 
-                  ${
-                    location.pathname === "/filter" ? "active" : ""
-                  } hover:text-[#97EFE9]`}
-                aria-current="page"
-              >
-                filter.
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/results"
-                className={`block py-2 px-3 text-sm text-white rounded 
-                  ${
-                    location.pathname === "results" ? "active" : ""
-                  } hover:text-[#97EFE9]`}
-                aria-current="page"
-              >
-                results.
-              </Link>
+              </Link> */}
             </li>
           </ul>
         </div>
