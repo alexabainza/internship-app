@@ -4,13 +4,20 @@ import Divider from "../../components/Divider";
 import { Link } from "react-router-dom";
 import { SocialIcon } from "react-social-icons";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../../redux/user/userSlice";
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { loading, error } = useSelector((state) => state.user);
 
   const handleChange = (e) => {
     setFormData({
@@ -26,7 +33,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
@@ -36,16 +43,13 @@ const Register = () => {
       });
       const data = await res.json();
       if (data.success === false) {
-        setError(data.message);
-        setIsLoading(false);
+        dispatch(signInFailure(data.message));
         return;
       }
-      setIsLoading(false);
-      setError(null);
+      dispatch(signInSuccess(data));
       navigate("/filter");
     } catch (error) {
-      setIsLoading(false);
-      setError(error.message);
+      dispatch(signInFailure(error.message));
     }
   };
 

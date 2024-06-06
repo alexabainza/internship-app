@@ -9,8 +9,18 @@ export const register = async (req, res, next) => {
   const hashedPassword = bcryptjs.hashSync(password, 10);
   const newUser = new User({ username, email, password: hashedPassword });
   try {
-    await newUser.save();
-    res.status(201).json("User created successfully!");
+    const savedUser = await newUser.save();
+    const { password, ...userDetails } = savedUser._doc;
+    const token = jwt.sign(
+      { id: savedUser._id, role: savedUser.role },
+      process.env.JWT_SECRET
+    );
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .status(201)
+      .json({ success: true, userDetails });
   } catch (error) {
     next(errorHandler(550, "Error registering user"));
   }
@@ -57,8 +67,18 @@ export const registerCompany = async (req, res, next) => {
     password: hashedPassword,
   });
   try {
-    await newCompany.save();
-    res.status(201).json("Company created successfully!");
+    const savedCompany = await newCompany.save();
+    const { password, ...companyDetails } = savedCompany._doc;
+    const token = jwt.sign(
+      { id: savedCompany._id, role: savedCompany.role },
+      process.env.JWT_SECRET
+    );
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .status(201)
+      .json({ success: true, companyDetails });
   } catch (error) {
     next(errorHandler(550, "Error registering company"));
   }
@@ -72,7 +92,7 @@ export const loginCompany = async (req, res, next) => {
     const validPassword = bcryptjs.compare(password, validCompany.password);
     if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
     const token = jwt.sign(
-      { id: validCompany._id, role: validUser.role },
+      { id: validCompany._id, role: validCompany.role },
       process.env.JWT_SECRET
     );
     const { password: pass, ...companyInfo } = validCompany._doc;

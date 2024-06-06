@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import logo from "../../assets/Carbs.svg";
 import { Link, useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../../redux/user/userSlice";
 const RegisterCompany = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { loading, error } = useSelector((state) => state.user);
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -20,11 +25,10 @@ const RegisterCompany = () => {
       [e.target.id]: e.target.value,
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/company-register", {
         method: "POST",
         headers: {
@@ -34,17 +38,13 @@ const RegisterCompany = () => {
       });
       const data = await res.json();
       if (data.success === false) {
-        setError(data.message);
-        setIsLoading(false);
+        dispatch(signInFailure(data.message));
         return;
       }
-      setIsLoading(false);
-      setError(null);
+      dispatch(signInSuccess(data));
       navigate("/filter");
     } catch (error) {
-      setIsLoading(false);
-      console.log(error.message);
-      setError(error.message);
+      dispatch(signInFailure(error.message));
     }
   };
 

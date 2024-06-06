@@ -3,13 +3,19 @@ import logo from "../../assets/Carbs.svg";
 import Divider from "../../components/Divider";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../../redux/user/userSlice";
 const LoginCompany = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { loading, error } = useSelector((state) => state.user);
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -25,7 +31,7 @@ const LoginCompany = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/company-login", {
         method: "POST",
         headers: {
@@ -35,17 +41,13 @@ const LoginCompany = () => {
       });
       const data = await res.json();
       if (data.success === false) {
-        setError(data.message);
-        setIsLoading(false);
+        dispatch(signInFailure(data.message));
         return;
       }
-      login(data);
-      setIsLoading(false);
+      dispatch(signInSuccess(data));
       navigate("/filter");
-      setError(null);
     } catch (error) {
-      setIsLoading(false);
-      setError(error.message);
+      dispatch(signInFailure(error.message));
     }
   };
   return (
