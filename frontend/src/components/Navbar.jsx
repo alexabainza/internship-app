@@ -13,7 +13,6 @@ function Navbar() {
     setIsMenuOpen(!isMenuOpen);
   };
   const handleLogout = async () => {
-    console.log("logout button clicked");
     try {
       await fetch("/api/auth/logout", {
         method: "POST",

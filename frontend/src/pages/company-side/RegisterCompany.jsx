@@ -42,7 +42,7 @@ const RegisterCompany = () => {
         return;
       }
       dispatch(signInSuccess(data));
-      navigate("/filter");
+      navigate("/user-dashboard");
     } catch (error) {
       dispatch(signInFailure(error.message));
     }

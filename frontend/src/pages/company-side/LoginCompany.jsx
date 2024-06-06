@@ -45,7 +45,7 @@ const LoginCompany = () => {
         return;
       }
       dispatch(signInSuccess(data));
-      navigate("/filter");
+      navigate("/company-dashboard");
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
