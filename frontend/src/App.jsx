@@ -13,6 +13,7 @@ import LoginCompany from "./pages/company-side/LoginCompany";
 import CompanyDashboard from "./pages/company-side/CompanyDashboard";
 import UserDashboard from "./pages/intern-side/UserDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SetupCompany from "./pages/company-side/SetupCompany";
 
 function App() {
   return (
@@ -25,8 +26,9 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/filter" element={<FilterAhead />} />
           <Route path="/" element={<Landing />} />
-          <Route path="/aboutcompany" element={<AboutCompany />} />
+          <Route path="/:company_name" element={<AboutCompany />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/setup" element={<SetupCompany />} />
           <Route
             path="/user-dashboard"
             element={

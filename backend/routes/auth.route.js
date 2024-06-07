@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/company-register", registerCompany);
+router.post("/setup", registerCompany);
 router.post("/company-login", loginCompany);
 router.post("/logout", logout);
 

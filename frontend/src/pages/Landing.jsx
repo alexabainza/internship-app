@@ -22,14 +22,14 @@ const Landing = () => {
             <Link
               to="/login"
               type="button"
-              class="text-[#356d35] text-center bg-[#89ff89] hover:bg-[#73d473] lg:w-[40%] sm:w-full w-full font-bold rounded-lg lg:text-lg md:text-md sm:text-sm text-sm px-5 lg:py-3 md:py-2.5 sm:py-2 py-2"
+              className="text-[#356d35] text-center bg-[#89ff89] hover:bg-[#73d473] lg:w-[40%] sm:w-full w-full font-bold rounded-lg lg:text-lg md:text-md sm:text-sm text-sm px-5 lg:py-3 md:py-2.5 sm:py-2 py-2"
             >
               I AM A STUDENT
             </Link>
             <Link
-              to="/company-registration"
+              to="/setup"
               type="button"
-              class="text-[#356d35] text-center bg-[#89ff89] hover:bg-[#73d473] lg:w-[40%] sm:w-full w-full font-bold rounded-lg lg:text-lg md:text-md sm:text-sm text-sm px-5 lg:py-3 md:py-2.5 sm:py-2 py-2"
+              className="text-[#356d35] text-center bg-[#89ff89] hover:bg-[#73d473] lg:w-[40%] sm:w-full w-full font-bold rounded-lg lg:text-lg md:text-md sm:text-sm text-sm px-5 lg:py-3 md:py-2.5 sm:py-2 py-2"
             >
               I AM AN EMPLOYER
             </Link>

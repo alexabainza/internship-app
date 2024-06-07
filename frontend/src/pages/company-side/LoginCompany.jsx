@@ -150,10 +150,10 @@ const LoginCompany = () => {
               </button>
               <Divider />
               <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
+                Don’t have a company account yet?
                 <Link
-                  to="/company-registration"
-                  class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  to="/setup"
+                  class="font-medium text-primary-600 hover:underline dark:text-primary-500 ms-2"
                 >
                   Sign up
                 </Link>

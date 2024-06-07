@@ -54,16 +54,28 @@ export const registerCompany = async (req, res, next) => {
   const {
     company_name,
     company_address,
+    industry,
+    company_size,
+    company_description,
+    company_logo,
     company_email,
     company_contact_no,
+    company_website,
+    company_username,
     password,
   } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
   const newCompany = new Company({
     company_name,
     company_address,
+    industry,
+    company_size,
+    company_description,
+    company_logo,
     company_email,
     company_contact_no,
+    company_website,
+    company_username,
     password: hashedPassword,
   });
   try {
