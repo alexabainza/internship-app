@@ -1,24 +1,62 @@
-import React from "react";
-import logo2 from "../../assets/logo2.jpg";
+import React, { useEffect, useState } from "react";
 import { lightTheme } from "../../styles/theme";
-import { FaGlobe, FaMailBulk, FaPhone, FaTelegram } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { FaGlobe, FaPhone, FaTelegram } from "react-icons/fa";
+import {
+  renderParagraphs,
+  renderRequirements,
+} from "../../../../backend/utils/rendering";
 const AboutCompany = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const [companyData, setCompanyData] = useState({});
+
+  useEffect(() => {
+    const fetchCompanyData = async () => {
+      try {
+        const response = await fetch(
+          `/api/company/${currentUser.company_username}`
+        );
+        const data = await response.json();
+        if (data.success) {
+          setCompanyData(data.companyDetails);
+        } else {
+          console.log("Error fetching data");
+        }
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+      }
+    };
+    fetchCompanyData();
+  }, [currentUser.company_username]);
+  if (!companyData) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className="bg-white min-h-screen pt-28 lg:px-20 md:px-12 sm:px-8 px-8 flex flex-col gap-6">
       <div className="flex gap-6">
-        <img src={logo2} className="h-28 w-28" />
+        <img
+          src={
+            companyData.company_logo
+              ? companyData.company_logo
+              : "https://shop.raceya.fit/wp-content/uploads/2020/11/logo-placeholder.jpg"
+          }
+          className="h-28 w-28 object-cover"
+        />
         <div className="flex flex-col gap-2 justify-center items-start">
           <p
-            className="lg:text-4xl  sm:text-3xl text-3xl font-bold"
+            className="lg:text-4xl  sm:text-3xl text-3xl font-bold capitalize"
             style={{ color: lightTheme.secondary }}
           >
-            FactSet
+            {companyData.company_username}
           </p>
           <div className="flex flex-col gap-0">
             <p className="lg:text-xl sm:text-md text-md">
-              Mandaue City, Cebu, Philippines
+              {companyData.company_address}
             </p>
-            <p className="lg:text-xl sm:text-md text-md">20 applicants</p>
+            <p className="lg:text-xl sm:text-md text-md">
+              {companyData.company_size}
+            </p>
           </div>
         </div>
       </div>
@@ -27,14 +65,14 @@ const AboutCompany = () => {
           className="text-sm border-2 border-opacity-50 py-1 px-6 rounded-full"
           style={{ color: lightTheme.primary, borderColor: lightTheme.primary }}
         >
-          Software Development
+          {companyData.industry}
         </p>
-        <p
+        {/* <p
           className="text-sm border-2 border-opacity-50 py-1 px-6 rounded-full"
           style={{ color: lightTheme.primary, borderColor: lightTheme.primary }}
         >
           Computer and Technology
-        </p>
+        </p> */}
       </div>
       <div className="flex flex-col gap-5">
         <div className="flex flex-col">
@@ -47,21 +85,7 @@ const AboutCompany = () => {
           >
             About the Company
           </h1>
-          <p>
-            Cursus iaculis eleifend fugit ullamcorper interdum! Nostrud? Aliquid
-            quae bibendum, eros ultricies netus inceptos, minim, quam, magna
-            quisquam, wisi beatae, harum atque conubia optio. Vivamus corporis
-            commodi voluptates excepturi debitis, porttitor litora alias
-            deserunt commodi ullam error inceptos vel! Tellus.
-          </p>
-          <br />
-          <p>
-            Officia ea rem eiusmod magna reprehenderit. Turpis ipsa aute,
-            quaerat, auctor fugit itaque quibusdam tempor enim nibh phasellus,
-            nulla urna donec facilis quod itaque exercitation semper porta
-            incidunt pellentesque corrupti tellus aliquid? Neque beatae animi
-            semper dui, aptent semper mollitia.
-          </p>
+          {renderParagraphs(companyData.company_description)}
         </div>
         <div className="flex flex-col gap-3 mb-4">
           <h1
@@ -73,18 +97,30 @@ const AboutCompany = () => {
           >
             Contact Us
           </h1>
-          <div className="flex gap-3 items-center">
-            <FaPhone color={lightTheme.primary} size={20} />
-            <p>(032) 647 2135</p>
-          </div>
-          <div className="flex gap-3 items-center">
-            <FaTelegram color={lightTheme.primary} size={20} />
-            <p>factset@gmail.com</p>
-          </div>
-          <div className="flex gap-3 items-center">
-            <FaGlobe color={lightTheme.primary} size={20} />
-            <p>factset.com</p>
-          </div>
+          {companyData.company_contact_no ? (
+            <div className="flex gap-3 items-center">
+              <FaPhone color={lightTheme.primary} size={20} />
+              <p>{companyData.company_contact_no}</p>
+            </div>
+          ) : (
+            ""
+          )}
+          {companyData.company_email ? (
+            <div className="flex gap-3 items-center">
+              <FaTelegram color={lightTheme.primary} size={20} />
+              <p>{companyData.company_email}</p>
+            </div>
+          ) : (
+            ""
+          )}
+          {companyData.company_website ? (
+            <div className="flex gap-3 items-center">
+              <FaGlobe color={lightTheme.primary} size={20} />
+              <p>{companyData.company_website}</p>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
         <div className="flex pb-10 lg:gap-10 md:gap-5 sm:gap-2 gap-2 lg:justify-center sm:justify-start justify-start flex-wrap">
           <button

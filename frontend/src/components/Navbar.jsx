@@ -30,9 +30,9 @@ function Navbar() {
   };
 
   const firstLetter =
-    currentUser.role === "Student"
-      ? currentUser.username.charAt(0).toUpperCase()
-      : currentUser.company_name.charAt(0).toUpperCase();
+    currentUser?.role === "Student"
+      ? currentUser?.username.charAt(0).toUpperCase()
+      : currentUser?.company_name.charAt(0).toUpperCase();
 
   return (
     <nav className="bg-gradient-to-br from-[#074666] to-[#0B0027] fixed w-full z-20 top-0 start-0 border-b-2 border-b-gray-500 border-gray-">
@@ -112,7 +112,7 @@ function Navbar() {
               )}
             </li>
             <li className="flex gap-4 items-center align-middle">
-              {currentUser.company_logo ? (
+              {currentUser?.company_logo ? (
                 <img
                   className="rounded-full h-7 w-7 object-cover"
                   src={currentUser.company_logo}

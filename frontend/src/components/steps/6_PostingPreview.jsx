@@ -2,15 +2,15 @@ import React, { useContext } from "react";
 import { StepperContext } from "../../context/StepperContext";
 import { lightTheme } from "../../styles/theme";
 import {
-  FaAccusoft,
-  FaArrowsAltV,
-  FaAtlassian,
   FaHollyBerry,
   FaMoneyBill,
-  FaNetworkWired,
   FaRegClock,
   FaSchool,
 } from "react-icons/fa";
+import {
+  renderParagraphs,
+  renderRequirements,
+} from "../../../../backend/utils/rendering";
 const PostingPreview = () => {
   const { userData } = useContext(StepperContext);
   let internshipTypeMessage = "";
@@ -22,26 +22,6 @@ const PostingPreview = () => {
     internshipTypeMessage =
       "Accepting both academic requirements and voluntary internships";
   }
-
-  const renderParagraphs = (text) => {
-    if (!text) return null;
-    const paragraphs = text.split("\n\n");
-    return paragraphs.map((paragraph, index) => (
-      <p key={index} className="my-5 lg:text-lg sm:text-md text-md">
-        {paragraph}
-      </p>
-    ));
-  };
-
-  const renderRequirements = (text) => {
-    if (!text) return null;
-    const reqs = text.split(".").filter((req) => req.trim() !== "");
-    return reqs.map((req, index) => (
-      <li key={index} className="my-5">
-        {req}
-      </li>
-    ));
-  };
 
   return (
     <div className="flex flex-col">
