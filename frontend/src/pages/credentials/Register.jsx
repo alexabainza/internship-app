@@ -46,8 +46,8 @@ const Register = () => {
         dispatch(signInFailure(data.message));
         return;
       }
-      dispatch(signInSuccess(data));
-      navigate("/filter");
+      dispatch(signInSuccess({ ...data.userDetails }));
+      navigate("/user-dashboard");
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
@@ -71,7 +71,7 @@ const Register = () => {
             <form class="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
-                  for="email"
+                  htmlFor="email"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Your email
@@ -88,7 +88,7 @@ const Register = () => {
               </div>
               <div>
                 <label
-                  for="email"
+                  htmlFor="email"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Your username
@@ -132,7 +132,7 @@ const Register = () => {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M8.305 6.307a5.003 5.003 0 00-7.07 0l1.687 1.687A3.993 3.993 0 014 8.305V X 0"
                       />
                     </svg>
@@ -144,9 +144,9 @@ const Register = () => {
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M3.855 5.16c0 3.624 2.895 6.48 6.143 6.48 3.248 0 6.143-2.856 6.143-6.48 0-3.624-2.895-6.48-6.143-6.48-3.248 0-6.143 2.856-6.143 6.48zM12 7.671a1 1 0 010 2.657h.793a1 1 0 100-2.657H12z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       />
                     </svg>
                   )}

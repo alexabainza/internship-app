@@ -3,6 +3,7 @@ import icon from "../assets/Carbs.svg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../src/redux/user/userSlice";
+import { current } from "@reduxjs/toolkit";
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
@@ -104,25 +105,18 @@ function Navbar() {
               )}
             </li>
             <li>
-              <Link to="/login">
-                {currentUser ? (
-                  <p className="text-white">{currentUser.username}</p>
-                ) : (
-                  <p className="`block py-2 px-3 text-sm text-white rounded ">
-                    login
-                  </p>
-                )}
-              </Link>
-              {/* <Link
-                to="/login"
-                className={`block py-2 px-3 text-sm text-white rounded 
-                  ${
-                    location.pathname === "/" ? "active" : ""
-                  } hover:text-[#97EFE9]`}
-                aria-current="page"
-              >
-                login.
-              </Link> */}
+              {currentUser ? (
+                <Link
+                  to={`/${currentUser.company_name}`}
+                  className="text-white"
+                >
+                  {currentUser.role === "Student"
+                    ? currentUser.username
+                    : currentUser.company_name}
+                </Link>
+              ) : (
+                <p className="text-white">Login</p>
+              )}
             </li>
           </ul>
         </div>

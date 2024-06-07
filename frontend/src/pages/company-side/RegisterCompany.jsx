@@ -41,8 +41,8 @@ const RegisterCompany = () => {
         dispatch(signInFailure(data.message));
         return;
       }
-      dispatch(signInSuccess(data));
-      navigate("/user-dashboard");
+      dispatch(signInSuccess({ ...data.companyDetails }));
+      navigate("/setup");
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
