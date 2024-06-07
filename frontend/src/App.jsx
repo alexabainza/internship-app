@@ -7,7 +7,6 @@ import Landing from "./pages/Landing";
 import Results from "./pages/intern-side/Results";
 import Register from "./pages/credentials/Register";
 import AboutCompany from "./pages/company-side/AboutCompany";
-import RegisterCompany from "./pages/company-side/RegisterCompany";
 import CreatePost from "./pages/company-side/CreatePost";
 import LoginCompany from "./pages/company-side/LoginCompany";
 import CompanyDashboard from "./pages/company-side/CompanyDashboard";
@@ -50,7 +49,6 @@ function App() {
           <Route path="/filter" element={<FilterAhead />} />{" "}
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/company-login" element={<LoginCompany />} />
-          <Route path="/company-registration" element={<RegisterCompany />} />
           {/* <Route path="/company-dashboard" element={<CompanyDashboard />} /> */}
         </Routes>
       </BrowserRouter>

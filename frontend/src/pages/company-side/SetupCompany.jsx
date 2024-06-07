@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { lightTheme } from "../../styles/theme";
 import Dropdown from "../../components/Dropdown";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { app } from "../../firebase";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import {
   signInStart,
   signInSuccess,
@@ -11,6 +18,11 @@ import {
 const SetupCompany = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [file, setFile] = useState(undefined);
+  const [filePerc, setFilePerc] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState(false);
+  const [preview, setPreview] = useState("");
+  const fileInputRef = useRef(null);
   const [userData, setUserData] = useState({
     company_name: "",
     company_address: "",
@@ -83,14 +95,59 @@ const SetupCompany = () => {
       dispatch(signInFailure(error.message));
     }
   };
+  useEffect(() => {
+    if (file) {
+      handleFileUpload(file);
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [file]);
+
+  const handleFileUpload = (file) => {
+    const storage = getStorage(app); //knows which storage we want to get the file from
+    const fileName = new Date().getTime() + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(progress);
+        setFilePerc(Math.round(progress));
+      },
+      (error) => {
+        setFileUploadError(true);
+      },
+
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
+          setUserData((prevData) => ({
+            ...prevData,
+            company_logo: downloadURL,
+          }))
+        );
+      }
+    );
+  };
+  const handleRemoveImage = () => {
+    setFile(undefined);
+    setPreview("");
+    setUserData((prevData) => ({
+      ...prevData,
+      company_logo: "",
+    }));
+    fileInputRef.current.click();
+  };
 
   return (
     <div className="pt-28 min-h-screen shadow-xl pb-2 bg-white lg:px-16 md:px-8 sm:px-2 px-2 overflow-auto">
-      <p class="text-sm font-light text-gray-500 dark:text-gray-400 flex justify-end">
+      <p className="text-sm font-light text-gray-500 dark:text-gray-400 flex justify-end">
         Already have an account?
         <Link
           to="/company-login"
-          class="font-medium text-primary-600 hover:underline dark:text-primary-500 ms-2"
+          className="font-medium text-primary-600 hover:underline dark:text-primary-500 ms-2"
         >
           Login here
         </Link>
@@ -136,7 +193,45 @@ const SetupCompany = () => {
               />
             </div>
           </div>
-
+          <div className="flex gap-4">
+            <div className="flex flex-col w-full mt-2">
+              <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+                Logo
+              </div>
+              <div className="bg-white my-1 p-1 flex border rounded-md">
+                <input
+                  ref={fileInputRef}
+                  onChange={(e) => setFile(e.target.files[0])}
+                  type="file"
+                  id="myFile"
+                  name="filename"
+                  accept="image/*"
+                />
+              </div>
+              {preview && (
+                <div className="my-4">
+                  <p className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
+                    Logo Preview
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={preview}
+                      alt="Company Logo Preview"
+                      className="w-32 h-32 object-cover border rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current.click()}
+                      className="mt-2 text-white font-medium rounded-lg text-sm px-5 py-2.5"
+                      style={{ backgroundColor: lightTheme.secondary }}
+                    >
+                      Replace image
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
           <div className="flex flex-col mb-1">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
               Industry
@@ -181,16 +276,34 @@ const SetupCompany = () => {
               </div>
             </div>
           </div>
-          <div className="flex gap-4">
+          {/* <div className="flex gap-4">
             <div className="flex flex-col w-full mt-2">
               <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
                 Logo
               </div>
               <div className="bg-white my-1 p-1 flex border rounded-md">
-                <input type="file" id="myFile" name="filename" />
+                <input
+                  onChange={(e) => setFile(e.target.files[0])}
+                  type="file"
+                  id="myFile"
+                  name="filename"
+                  accept="image/*"
+                />
               </div>
+              {preview && (
+                <div className="mt-4">
+                  <p className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
+                    Logo Preview
+                  </p>
+                  <img
+                    src={preview}
+                    alt="Company Logo Preview"
+                    className="w-32 h-32 object-cover border rounded-md"
+                  />
+                </div>
+              )}
             </div>
-          </div>
+          </div> */}
           <div className="flex flex-col">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
               Company Email
