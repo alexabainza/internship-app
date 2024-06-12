@@ -1,7 +1,7 @@
 import React from "react";
 import { lightTheme } from "../styles/theme";
 import { FaBinoculars, FaEye } from "react-icons/fa";
-const CompanyPostings = () => {
+const CompanyPostings = ({ posting }) => {
   return (
     <div className="text-black lg:h-36 md:min-w-screen sm:min-w-screen min-w-screen lg:px-8 md:px-4 sm:px-4 px-4 py-4 bg-white rounded-lg">
       <div className="flex lg:flex-row md:flex-row sm:flex-col flex-col gap-4">
@@ -11,7 +11,7 @@ const CompanyPostings = () => {
               className="font-bold text-2xl"
               style={{ color: lightTheme.primary }}
             >
-              Software Engineer Intern
+              {posting.job_title}
             </h1>
             <p className="text-md">
               Post ends on{" "}
@@ -28,7 +28,7 @@ const CompanyPostings = () => {
                 className="font-semibold"
                 style={{ color: lightTheme.primary }}
               >
-                Sam Jones
+                {posting.first_name} {posting.last_name}
               </span>
             </p>
           </div>
