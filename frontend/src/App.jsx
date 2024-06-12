@@ -46,7 +46,12 @@ function App() {
           <Route path="/edit-company-profile" element={<UpdateCompany />} />
           <Route path="/company-dashboard" element={<CompanyDashboard />} />
           <Route path="/filter" element={<FilterAhead />} />{" "}
-          <Route path="/create-post" element={<CreatePost />} />
+          <Route
+            path="/create-post"
+            element={
+              <ProtectedRoute element={CreatePost} allowedRoles={["Company"]} />
+            }
+          />
           <Route path="/company-login" element={<LoginCompany />} />
           <Route path="/applicants-list" element={<ApplicantsList />} />
           <Route path="/application" element={<Applying />} />

@@ -7,7 +7,7 @@ import {
 import { verifyToken } from "../utils/verifyUser.js";
 
 const router = express.Router();
-router.post("/create-post", create_post);
+router.post("/create-post", verifyToken, create_post);
 router.get("/:username", get_profile_data);
 router.post("/:username/edit", verifyToken, edit_company_data);
 export default router;

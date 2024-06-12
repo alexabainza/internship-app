@@ -131,12 +131,13 @@ const AboutCompany = () => {
           >
             View Applicants
           </button>
-          <button
+          <Link
+            to="/create-post"
             className="uppercase text-white py-2 px-8 rounded-lg text-md"
             style={{ backgroundColor: lightTheme.primary }}
           >
             Post An Opening
-          </button>
+          </Link>
         </div>
       </div>
     </div>

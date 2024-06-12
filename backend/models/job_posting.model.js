@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const jobPostingSchema = new mongoose.Schema(
   {
+    company_id: {
+      type: String,
+      required: true,
+    },
+
     first_name: {
       type: String,
       required: true,
@@ -70,14 +75,17 @@ const jobPostingSchema = new mongoose.Schema(
     academic_requirements: {
       type: Boolean,
       required: true,
+      default: false,
     },
     voluntary_internship: {
       type: Boolean,
       required: true,
+      default: false,
     },
     role_description: {
       type: String,
       required: true,
+      default: false,
     },
     requirements: {
       type: String,

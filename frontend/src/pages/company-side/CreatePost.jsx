@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import Stepper from "../../components/Stepper";
 import StepperControl from "../../components/StepperControl";
 import CompanyInformation from "../../components/steps/1_CompanyInformation";
@@ -8,8 +10,15 @@ import GeneralInformation from "../../components/steps/4_GeneralInformation";
 import { StepperContext } from "../../context/StepperContext";
 import JobDetails from "../../components/steps/5_JobDetails";
 import PostingPreview from "../../components/steps/6_PostingPreview";
-
+import {
+  postingFailure,
+  postingStart,
+  postingSuccess,
+} from "../../redux/user/userSlice.js";
 const CreatePost = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const steps = [
     "Company Information",
@@ -19,8 +28,11 @@ const CreatePost = () => {
     "Job Details",
     "Posting Preview",
   ];
-  const [userData, setUserData] = useState([]);
-
+  const [userData, setUserData] = useState({
+    company_id: currentUser._id,
+    voluntary_internship: false,
+    academic_requirements: false,
+  });
   const [finalData, setFinalData] = useState([]);
 
   const displayStep = (step) => {
@@ -40,12 +52,37 @@ const CreatePost = () => {
       default:
     }
   };
-
+  const handleSubmit = async () => {
+    dispatch(postingStart());
+    try {
+      const res = await fetch(`/api/company/create-post`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(postingFailure(data.message));
+        return;
+      }
+      dispatch(postingSuccess(data));
+      navigate("/company-dashboard");
+    } catch (error) {
+      dispatch(postingFailure(error.message));
+    }
+  };
   const handleClick = (direction) => {
     let newStep = currentStep;
     direction === "next" ? newStep++ : newStep--;
-    // Check if the steps are within the bounds
-    newStep > 0 && newStep <= steps.length && setCurrentStep(newStep);
+    if (newStep > 0 && newStep <= steps.length) {
+      setCurrentStep(newStep);
+    }
+
+    if (currentStep === steps.length && direction === "next") {
+      handleSubmit();
+    }
   };
 
   return (

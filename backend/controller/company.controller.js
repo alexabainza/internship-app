@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 
 export const create_post = async (req, res, next) => {
   const {
+    company_id,
     first_name,
     last_name,
     email,
@@ -30,6 +31,7 @@ export const create_post = async (req, res, next) => {
   } = req.body;
 
   const newJobPosting = new JobPosting({
+    company_id,
     first_name,
     last_name,
     email,
@@ -54,7 +56,10 @@ export const create_post = async (req, res, next) => {
   });
   try {
     await newJobPosting.save();
-    res.status(201).json("Job posting created successfully");
+    res.status(201).json({
+      success: true,
+      message: "Job posting created successfully",
+    });
   } catch (error) {
     next(errorHandler(550, "Error creating job posting"));
   }
@@ -81,8 +86,6 @@ export const get_profile_data = async (req, res, next) => {
 };
 
 export const edit_company_data = async (req, res, next) => {
-  console.log("Logged in username: ", req.user.company_username);
-  console.log("Params username: ", req.params.username);
   if (req.user.company_username !== req.params.username)
     return next(errorHandler(401, "You can only update your own account!"));
   try {
