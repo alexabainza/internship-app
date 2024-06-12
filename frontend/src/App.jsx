@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Login from "./pages/credentials/Login";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -9,10 +8,14 @@ import Register from "./pages/credentials/Register";
 import AboutCompany from "./pages/company-side/AboutCompany";
 import CreatePost from "./pages/company-side/CreatePost";
 import LoginCompany from "./pages/company-side/LoginCompany";
-import CompanyDashboard from "./pages/company-side/CompanyDashboard";
 import UserDashboard from "./pages/intern-side/UserDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SetupCompany from "./pages/company-side/SetupCompany";
+import ApplicationsList from "./pages/intern-side/ApplicationsList";
+import ViewProfile from "./pages/intern-side/ViewProfile";
+import CompanyDashboard from "./pages/company-side/CompanyDashboard";
+import ApplicantsList from "./pages/company-side/ApplicantsList";
+import Applying from "./pages/intern-side/Applying";
 
 function App() {
   return (
@@ -28,6 +31,8 @@ function App() {
           <Route path="/:company_name" element={<AboutCompany />} />
           <Route path="/results" element={<Results />} />
           <Route path="/setup" element={<SetupCompany />} />
+          <Route path="/profile" element={<ViewProfile />} />
+          <Route path="/applications-list" element={<ApplicationsList />} />
           <Route
             path="/user-dashboard"
             element={
@@ -37,19 +42,12 @@ function App() {
               />
             }
           />
-          <Route
-            path="/company-dashboard"
-            element={
-              <ProtectedRoute
-                element={CompanyDashboard}
-                allowedRoles={["Company"]}
-              />
-            }
-          />
+          <Route path="/company-dashboard" element={<CompanyDashboard />} />
           <Route path="/filter" element={<FilterAhead />} />{" "}
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/company-login" element={<LoginCompany />} />
-          {/* <Route path="/company-dashboard" element={<CompanyDashboard />} /> */}
+          <Route path="/applicants-list" element={<ApplicantsList />} />
+          <Route path="/application" element={<Applying />} />
         </Routes>
       </BrowserRouter>
     </>
