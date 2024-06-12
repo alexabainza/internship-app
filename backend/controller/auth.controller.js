@@ -12,7 +12,7 @@ export const register = async (req, res, next) => {
     const savedUser = await newUser.save();
     const { password, ...userDetails } = savedUser._doc;
     const token = jwt.sign(
-      { id: savedUser._id, role: savedUser.role },
+      { id: savedUser._id, role: savedUser.role, username: savedUser.username },
       process.env.JWT_SECRET
     );
     res
@@ -34,7 +34,7 @@ export const login = async (req, res, next) => {
     const validPassword = bcryptjs.compare(password, validUser.password);
     if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
     const token = jwt.sign(
-      { id: validUser._id, role: validUser.role },
+      { id: validUser._id, role: validUser.role, username: validUser.username },
       process.env.JWT_SECRET
     );
     const { password: pass, ...userInfo } = validUser._doc;
@@ -82,7 +82,11 @@ export const registerCompany = async (req, res, next) => {
     const savedCompany = await newCompany.save();
     const { password, ...companyDetails } = savedCompany._doc;
     const token = jwt.sign(
-      { id: savedCompany._id, role: savedCompany.role },
+      {
+        id: savedCompany._id,
+        role: savedCompany.role,
+        company_username: savedCompany.company_username,
+      },
       process.env.JWT_SECRET
     );
     res
@@ -104,7 +108,11 @@ export const loginCompany = async (req, res, next) => {
     const validPassword = bcryptjs.compare(password, validCompany.password);
     if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
     const token = jwt.sign(
-      { id: validCompany._id, role: validCompany.role },
+      {
+        id: validCompany._id,
+        role: validCompany.role,
+        company_username: validCompany.company_username,
+      },
       process.env.JWT_SECRET
     );
     const { password: pass, ...companyInfo } = validCompany._doc;

@@ -6,6 +6,7 @@ import {
   renderParagraphs,
   renderRequirements,
 } from "../../../../backend/utils/rendering";
+import { Link } from "react-router-dom";
 const AboutCompany = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [companyData, setCompanyData] = useState({});
@@ -48,7 +49,7 @@ const AboutCompany = () => {
             className="lg:text-4xl  sm:text-3xl text-3xl font-bold capitalize"
             style={{ color: lightTheme.secondary }}
           >
-            {companyData.company_username}
+            {companyData.company_name}
           </p>
           <div className="flex flex-col gap-0">
             <p className="lg:text-xl sm:text-md text-md">
@@ -67,12 +68,13 @@ const AboutCompany = () => {
         >
           {companyData.industry}
         </p>
-        {/* <p
-          className="text-sm border-2 border-opacity-50 py-1 px-6 rounded-full"
-          style={{ color: lightTheme.primary, borderColor: lightTheme.primary }}
+        <Link
+          to="/edit-company-profile"
+          className="text-sm border-2 border-opacity-50 py-1 px-6 rounded-full text-[#056480] hover:bg-[#056480] hover:text-white"
+          style={{ borderColor: lightTheme.primary }}
         >
-          Computer and Technology
-        </p> */}
+          Edit Company Profile
+        </Link>
       </div>
       <div className="flex flex-col gap-5">
         <div className="flex flex-col">

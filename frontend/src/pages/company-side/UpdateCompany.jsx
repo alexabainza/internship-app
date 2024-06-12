@@ -1,41 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  updateCompanyFailure,
+  updateCompanyStart,
+  updateCompanySuccess,
+} from "../../redux/user/userSlice";
+import { Link } from "react-router-dom";
 import { lightTheme } from "../../styles/theme";
 import Dropdown from "../../components/Dropdown";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { app } from "../../firebase";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
-} from "../../redux/user/userSlice";
-const SetupCompany = () => {
-  const navigate = useNavigate();
+import { useNavigate, useParams } from "react-router-dom";
+
+const UpdateCompany = () => {
+  const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [file, setFile] = useState(undefined);
-  const [filePerc, setFilePerc] = useState(0);
-  const [fileUploadError, setFileUploadError] = useState(false);
-  const [preview, setPreview] = useState("");
+  const navigate = useNavigate();
+
   const fileInputRef = useRef(null);
-  const [userData, setUserData] = useState({
-    company_name: "",
-    company_address: "",
-    industry: "",
-    company_size: "",
-    company_description: "",
-    company_logo: "",
-    company_email: "",
-    company_contact_no: "",
-    company_website: "",
-    company_username: "",
-    password: "",
-  });
+  const [preview, setPreview] = useState("");
+  const [companyData, setCompanyData] = useState({});
 
   const industry = [
     { label: "Advertising and Marketing", value: "1" },
@@ -58,87 +40,87 @@ const SetupCompany = () => {
     { label: "10000+ employees", value: "8" },
   ];
 
+  useEffect(() => {
+    const fetchCompanyData = async () => {
+      try {
+        const response = await fetch(
+          `/api/company/${currentUser.company_username}`
+        );
+        const data = await response.json();
+        console.log(data);
+        if (data.success) {
+          setCompanyData(data.companyDetails);
+        } else {
+          console.log("Error fetching data");
+        }
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+      }
+    };
+    fetchCompanyData();
+  }, [currentUser.company_username]);
+
+  if (!companyData) {
+    return <p>Loading...</p>;
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prevData) => ({
+    console.log(e.target.name, e.target.value);
+    setCompanyData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
   const handleSelect = (name, option) => {
-    setUserData((prevData) => ({
+    setCompanyData((prevData) => ({
       ...prevData,
       [name]: option.label,
     }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCompanyData((prevData) => ({
+        ...prevData,
+        company_logo: file,
+      }));
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      dispatch(signInStart());
-      const res = await fetch("/api/auth/setup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+      dispatch(updateCompanyStart());
+      console.log(companyData);
+      const res = await fetch(
+        `/api/company/${currentUser.company_username}/edit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(companyData),
+        }
+      );
       const data = await res.json();
       if (data.success === false) {
-        dispatch(signInFailure(data.message));
+        dispatch(updateCompanyFailure(data.message));
         return;
       }
-      dispatch(signInSuccess({ ...data.companyDetails }));
-      navigate("/company-dashboard");
-    } catch (error) {
-      dispatch(signInFailure(error.message));
-    }
-  };
-  useEffect(() => {
-    if (file) {
-      handleFileUpload(file);
-      const objectUrl = URL.createObjectURL(file);
-      setPreview(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
-    }
-  }, [file]);
-
-  const handleFileUpload = (file) => {
-    const storage = getStorage(app); //knows which storage we want to get the file from
-    const fileName = new Date().getTime() + file.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(progress);
-        setFilePerc(Math.round(progress));
-      },
-      (error) => {
-        setFileUploadError(true);
-      },
-
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setUserData((prevData) => ({
-            ...prevData,
-            company_logo: downloadURL,
-          }))
-        );
+      dispatch(updateCompanySuccess(data));
+      setCompanyData(data.updatedCompany);
+      if (currentUser.company_username !== companyData.company_username) {
+        navigate(`/${companyData.company_username}`);
+      } else {
+        navigate(`/${currentUser.company_username}`);
       }
-    );
-  };
-  const handleRemoveImage = () => {
-    setFile(undefined);
-    setPreview("");
-    setUserData((prevData) => ({
-      ...prevData,
-      company_logo: "",
-    }));
-    fileInputRef.current.click();
+    } catch (error) {
+      dispatch(updateCompanyFailure(error.message));
+    }
   };
 
   return (
@@ -170,7 +152,7 @@ const SetupCompany = () => {
             <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
               <input
                 onChange={handleChange}
-                value={userData.company_name}
+                value={companyData.company_name || ""}
                 name="company_name"
                 placeholder="Company Name"
                 required
@@ -185,7 +167,7 @@ const SetupCompany = () => {
             <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
               <input
                 onChange={handleChange}
-                value={userData.company_address}
+                value={companyData.company_address || ""}
                 name="company_address"
                 placeholder="Company Address"
                 required
@@ -201,21 +183,21 @@ const SetupCompany = () => {
               <div className="bg-white my-1 p-1 flex border rounded-md">
                 <input
                   ref={fileInputRef}
-                  onChange={(e) => setFile(e.target.files[0])}
+                  onChange={handleFileChange}
                   type="file"
                   id="myFile"
                   name="filename"
                   accept="image/*"
                 />
               </div>
-              {preview && (
+              {companyData.company_logo && (
                 <div className="my-4">
                   <p className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
                     Logo Preview
                   </p>
                   <div className="flex items-center gap-4">
                     <img
-                      src={preview}
+                      src={preview || companyData.company_logo}
                       alt="Company Logo Preview"
                       className="w-32 h-32 object-cover border rounded-md"
                     />
@@ -239,6 +221,7 @@ const SetupCompany = () => {
             <Dropdown
               options={industry}
               onSelect={(option) => handleSelect("industry", option)}
+              selectedValue={companyData.industry}
             />
           </div>
           <div className="flex flex-col mb-1">
@@ -248,6 +231,7 @@ const SetupCompany = () => {
             <Dropdown
               options={companySize}
               onSelect={(option) => handleSelect("company_size", option)}
+              selectedValue={companyData.company_size}
             />
           </div>
         </section>
@@ -266,7 +250,7 @@ const SetupCompany = () => {
               <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
                 <textarea
                   onChange={handleChange}
-                  value={userData.company_description}
+                  value={companyData.company_description || ""}
                   name="company_description"
                   placeholder="Enter company description here"
                   required
@@ -276,34 +260,6 @@ const SetupCompany = () => {
               </div>
             </div>
           </div>
-          {/* <div className="flex gap-4">
-            <div className="flex flex-col w-full mt-2">
-              <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
-                Logo
-              </div>
-              <div className="bg-white my-1 p-1 flex border rounded-md">
-                <input
-                  onChange={(e) => setFile(e.target.files[0])}
-                  type="file"
-                  id="myFile"
-                  name="filename"
-                  accept="image/*"
-                />
-              </div>
-              {preview && (
-                <div className="mt-4">
-                  <p className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
-                    Logo Preview
-                  </p>
-                  <img
-                    src={preview}
-                    alt="Company Logo Preview"
-                    className="w-32 h-32 object-cover border rounded-md"
-                  />
-                </div>
-              )}
-            </div>
-          </div> */}
           <div className="flex flex-col">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
               Company Email
@@ -311,11 +267,11 @@ const SetupCompany = () => {
             <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
               <input
                 onChange={handleChange}
-                value={userData.company_email}
+                value={companyData.company_email || ""}
                 name="company_email"
                 placeholder="Company Email"
                 required
-                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+                className="p-1 px-2 appearance-none                 outline-none border-none w-full text-gray-800"
               />
             </div>
           </div>
@@ -326,7 +282,7 @@ const SetupCompany = () => {
             <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
               <input
                 onChange={handleChange}
-                value={userData.company_contact_no}
+                value={companyData.company_contact_no || ""}
                 name="company_contact_no"
                 placeholder="Company Contact Number"
                 required
@@ -342,7 +298,7 @@ const SetupCompany = () => {
               <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
                 <input
                   onChange={handleChange}
-                  value={userData.company_website}
+                  value={companyData.company_website || ""}
                   name="company_website"
                   placeholder="Enter company website here"
                   required
@@ -366,7 +322,7 @@ const SetupCompany = () => {
             <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
               <input
                 onChange={handleChange}
-                value={userData.company_username}
+                value={companyData.company_username || ""}
                 name="company_username"
                 placeholder="Username"
                 required
@@ -374,22 +330,21 @@ const SetupCompany = () => {
               />
             </div>
           </div>
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
               Password
             </div>
             <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
               <input
                 onChange={handleChange}
-                value={userData.password}
+                value={companyData.password || ""}
                 name="password"
                 type="password"
                 placeholder="Company Password"
-                required
                 className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
               />
             </div>
-          </div>
+          </div> */}
         </section>
         <div className="flex justify-end">
           <button
@@ -397,7 +352,7 @@ const SetupCompany = () => {
             className="mt-4 text-white  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
             style={{ backgroundColor: lightTheme.secondary }}
           >
-            Submit
+            Update
           </button>
         </div>
       </form>
@@ -405,4 +360,4 @@ const SetupCompany = () => {
   );
 };
 
-export default SetupCompany;
+export default UpdateCompany;

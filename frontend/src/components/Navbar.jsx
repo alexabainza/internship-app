@@ -132,7 +132,7 @@ function Navbar() {
 
               {currentUser ? (
                 <Link
-                  to={`/${currentUser.company_name}`}
+                  to={`/${currentUser.company_username}`}
                   className="text-white text-md font-medium"
                 >
                   {currentUser.role === "Student"
