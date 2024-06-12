@@ -1,60 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import { lightTheme } from "../styles/theme";
-import { FaBinoculars, FaEye } from "react-icons/fa";
-const CompanyPostings = ({ posting }) => {
+import { FaBinoculars, FaEye, FaEllipsisV } from "react-icons/fa";
+const CompanyPostings = ({ posting, onDelete }) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="text-black lg:h-36 md:min-w-screen sm:min-w-screen min-w-screen lg:px-8 md:px-4 sm:px-4 px-4 py-4 bg-white rounded-lg">
-      <div className="flex lg:flex-row md:flex-row sm:flex-col flex-col gap-4">
-        <div className="lg:w-3/5 sm:w-full w-full  flex flex-col gap-3 justify-between">
-          <div className="flex flex-col">
-            <h1
-              className="font-bold text-2xl"
+    <div className="text-black lg:h-36 lg:px-8 md:px-4 sm:px-4 px-4 py-4 bg-white rounded-lg flex">
+      <div className="lg:w-2/5 sm:w-full w-full  flex flex-col gap-3 justify-between border-2">
+        <div className="flex flex-col">
+          <h1
+            className="font-bold text-2xl"
+            style={{ color: lightTheme.primary }}
+          >
+            {posting.job_title}
+          </h1>
+          <p className="text-md">
+            Post ends on{" "}
+            <span
+              className="font-semibold"
               style={{ color: lightTheme.primary }}
             >
-              {posting.job_title}
-            </h1>
-            <p className="text-md">
-              Post ends on{" "}
-              <span
-                className="font-semibold"
-                style={{ color: lightTheme.primary }}
-              >
-                11 Jan 2023
-              </span>
-            </p>
-            <p className="text-md">
-              Posted by{" "}
-              <span
-                className="font-semibold"
-                style={{ color: lightTheme.primary }}
-              >
-                {posting.first_name} {posting.last_name}
-              </span>
-            </p>
-          </div>
-
-          <div className="flex">
-            <button
-              className="uppercase text-sm me-8 font-semibold"
-              style={{ color: lightTheme.green }}
+              11 Jan 2023
+            </span>
+          </p>
+          <p className="text-md">
+            Posted by{" "}
+            <span
+              className="font-semibold"
+              style={{ color: lightTheme.primary }}
             >
-              View
-            </button>
-            <button
-              className="uppercase text-sm me-8 font-semibold"
-              style={{ color: lightTheme.green }}
-            >
-              Edit
-            </button>
-            <button
-              className="uppercase text-sm me-8 font-semibold"
-              style={{ color: lightTheme.green }}
-            >
-              Browse Matches
-            </button>
-          </div>
+              {posting.first_name} {posting.last_name}
+            </span>
+          </p>
         </div>
-        <div className="lg:w-2/5 sm:w-full w-full  flex flex-col py-2 justify-between">
+
+        <div className="flex">
+          <button
+            className="uppercase text-sm me-8 font-semibold"
+            style={{ color: lightTheme.green }}
+          >
+            View
+          </button>
+          <button
+            className="uppercase text-sm me-8 font-semibold"
+            style={{ color: lightTheme.green }}
+          >
+            Edit
+          </button>
+          <button
+            className="uppercase text-sm me-8 font-semibold"
+            style={{ color: lightTheme.green }}
+          >
+            Browse Matches
+          </button>
+        </div>
+      </div>
+      <div className="flex lg:w-3/5 sm:w-full w-full">
+        <div className="w-full border-2 flex flex-col py-2 justify-between">
           <div className="flex justify-between">
             <div className="flex flex-col gap-1 h-16 w-32  lg:justify-between items-center">
               <h1
@@ -116,6 +117,24 @@ const CompanyPostings = ({ posting }) => {
               </span>
             </p>
           </div>
+        </div>
+        <div className="">
+          <FaEllipsisV
+            color="black"
+            size={20}
+            className="cursor-pointer"
+            onClick={() => setIsOpen(!isOpen)}
+          />
+          {isOpen && (
+            <div className="absolute right-20 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
+              <button
+                className="w-full text-left px-4 py-4 text-sm hover:bg-red-800 hover:text-white rounded-md bg-red-500 text-white"
+                onClick={onDelete}
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

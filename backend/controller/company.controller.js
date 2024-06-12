@@ -136,16 +136,3 @@ export const edit_company_data = async (req, res, next) => {
     next(error);
   }
 };
-
-export const get_company_postings = async (req, res, next) => {
-  const { company_id } = req.params;
-  try {
-    const postings = await JobPosting.find({ company_id: company_id });
-    res.status(200).json({
-      success: true,
-      postings,
-    });
-  } catch (error) {
-    next(errorHandler(550, "Error getting postings"));
-  }
-};
