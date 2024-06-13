@@ -30,3 +30,15 @@ export const delete_posting = async (req, res, next) => {
     next(error);
   }
 };
+
+export const get_all_postings = async (req, res, next) => {
+  try {
+    const all_posts = await JobPosting.find().populate("company_id");
+    res.status(200).json({
+      success: true,
+      postings: all_posts,
+    });
+  } catch (error) {
+    next(errorHandler(550, "Error getting postings"));
+  }
+};

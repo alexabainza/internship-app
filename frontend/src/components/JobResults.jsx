@@ -1,33 +1,31 @@
 import React from "react";
-import { useTheme } from "@mui/material/styles";
-import logo1 from "../assets/logo1.jpg"
-import logo2 from "../assets/logo2.jpg"
+import logo1 from "../assets/logo1.jpg";
 
-const JobResults = () => {
-  const theme = useTheme(); // Access the theme
-
+const JobResults = ({ posting, onClick, selected }) => {
   return (
-    <div className="h-full">
+    <div className="h-full" onClick={onClick}>
       <a
         href="#"
-        class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+        className={`flex flex-col items-center  rounded-lg shadow md:flex-row md:max-w-xl hover:bg-blue-200 ${
+          selected ? "bg-blue-100 text-white" : "bg-white text-black"
+        }`}
       >
         <img
-          class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
+          className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
           src={logo1}
           alt=""
         />
-        <div class="flex flex-col justify-between p-4 leading-normal">
-          <h5 class="mb-0.5 text-xl font-bold tracking-tight text-[#056480]">
-            Software Engineer Intern
+        <div className="flex flex-col justify-between p-4 leading-normal">
+          <h5 className="mb-0.5 text-xl font-bold tracking-tight text-[#056480]">
+            {posting.job_title}
           </h5>
-          <p class="font-normal text-gray-700 dark:text-gray-400">
-            Company name
+          <p className="font-normal text-gray-700 dark:text-gray-400">
+            {posting.company_id.company_name}
           </p>
-          <p class=" mb-3 font-normal text-gray-700 dark:text-gray-400">
-            Company location
+          <p className=" mb-3 font-normal text-gray-700 dark:text-gray-400">
+            {posting.city}, {posting.province}
           </p>
-          <p class="text-sm mb-3 font-normal text-gray-700 dark:text-gray-400">
+          <p className="text-sm mb-3 font-normal text-gray-700 dark:text-gray-400">
             Posted less than one day ago | 24 applicants
           </p>
         </div>

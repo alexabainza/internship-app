@@ -1,12 +1,13 @@
+import { ref } from "firebase/database";
 import mongoose from "mongoose";
 
 const jobPostingSchema = new mongoose.Schema(
   {
     company_id: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
       required: true,
     },
-
     first_name: {
       type: String,
       required: true,
