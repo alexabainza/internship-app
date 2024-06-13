@@ -11,6 +11,7 @@ import {
   renderParagraphs,
   renderRequirements,
 } from "../../../../backend/utils/rendering";
+import { Link } from "react-router-dom";
 const Results = () => {
   const [postings, setPostings] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -193,12 +194,13 @@ const Results = () => {
               <p>{selectedJob.company_id.company_description}</p>
             </div>
             <div className="flex flex-row justify-center mt-16">
-              <button
+              <Link
+                to="/application"
                 type="button"
                 className="text-white bg-[#056480] hover:bg-[#056380d5] w-1/3 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
               >
                 Apply now
-              </button>
+              </Link>
               <button
                 type="button"
                 className="text-white bg-[#056480] hover:bg-[#056380d5] w-1/3 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
