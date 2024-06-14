@@ -38,7 +38,13 @@ function Navbar() {
     <nav className="bg-gradient-to-br from-[#074666] to-[#0B0027] fixed w-full z-20 top-0 start-0 border-b-2 border-b-gray-500 border-gray-">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
-          to="/"
+          to={`/${
+            !currentUser
+              ? ""
+              : currentUser.role === "Student"
+              ? "user-dashboard"
+              : "company-dashboard"
+          }`}
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img src={icon} className="h-8" alt="Flowbite Logo" />
