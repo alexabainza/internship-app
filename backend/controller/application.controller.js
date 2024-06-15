@@ -3,6 +3,7 @@ import { errorHandler } from "../utils/error.js";
 
 export const send_application = async (req, res, next) => {
   const { job_id } = req.params;
+  console.log(req.user.id);
   const {
     last_name,
     first_name,
@@ -20,6 +21,7 @@ export const send_application = async (req, res, next) => {
   } = req.body;
 
   const newApplication = new Application({
+    user_id: req.user.id,
     job_id,
     last_name,
     first_name,
