@@ -1,9 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import person from "../../assets/persontyping.jpg";
 import { lightTheme } from "../../styles/theme";
 import Applications from "../../components/Applications";
 
 const ApplicationsList = () => {
+  const [applications, setApplications] = useState([]);
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await fetch(`/api/application/get-applications`);
+        const data = await response.json();
+        if (data.success) {
+          setApplications(data.applications);
+          console.log(data.applications);
+        }
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+      }
+    };
+    fetchApplications();
+  }, []);
   return (
     <div className="pt-16 min-h-screen shadow-xl  bg-white  overflow-auto flex lg:flex-row sm:flex-col flex-col">
       <div className="relative lg:w-1/3 sm:w-full h-screen">
@@ -18,9 +35,9 @@ const ApplicationsList = () => {
           Your Applications
         </h1>
         <div className="flex flex-col gap-2">
-          <Applications />
-          <Applications />
-          <Applications />
+          {applications.map((application, index) => (
+            <Applications application={application} key={application._id} />
+          ))}
         </div>
       </div>
     </div>

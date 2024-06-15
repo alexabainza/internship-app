@@ -3,7 +3,6 @@ import { errorHandler } from "../utils/error.js";
 
 export const send_application = async (req, res, next) => {
   const { job_id } = req.params;
-  console.log(req.user.id);
   const {
     last_name,
     first_name,
@@ -62,5 +61,19 @@ export const send_application = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(errorHandler(550, "Error submitting application"));
+  }
+};
+
+export const get_applications = async (req, res, next) => {
+  try {
+    const applications = await Application.find({
+      user_id: req.user.id,
+    }).populate("job_id");
+    res.status(200).json({
+      success: true,
+      applications: applications,
+    });
+  } catch (error) {
+    next(errorHandler(550, "Error getting applications!"));
   }
 };
