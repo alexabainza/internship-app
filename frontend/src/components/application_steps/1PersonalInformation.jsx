@@ -5,6 +5,11 @@ import { useContext } from "react";
 
 const PersonalInformation = () => {
   const { applicationData, setApplicationData } = useContext(StepperContext);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setApplicationData({ ...applicationData, [name]: value });
+  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -26,6 +31,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.last_name}
                   name="last_name"
                   placeholder="Last Name"
@@ -40,6 +46,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.last_name}
                   name="last_name"
                   placeholder="First Name"
@@ -54,6 +61,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.middle_initial}
                   name="middle_initial"
                   placeholder="Middle Initial"
@@ -68,6 +76,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.gender}
                   name="gender"
                   placeholder="Gender"
@@ -82,6 +91,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.nationality}
                   name="nationality"
                   placeholder="Nationality"
@@ -98,6 +108,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.birthdate}
                   name="birthdate"
                   placeholder="Birth date"
@@ -112,6 +123,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.address}
                   name="address"
                   placeholder="Address"
@@ -127,6 +139,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.gender}
                   name="gender"
                   placeholder="Gender"
@@ -143,6 +156,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.contact_no}
                   name="contact_no"
                   placeholder="Contact Number"
@@ -157,6 +171,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.email_address}
                   name="email_address"
                   placeholder="Email Address"
@@ -172,6 +187,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.facebook_link}
                   name="facebook_link"
                   placeholder="Facebook Link"
@@ -188,6 +204,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.school}
                   name="school"
                   placeholder="School"
@@ -202,6 +219,7 @@ const PersonalInformation = () => {
               </div>
               <div className="my-1 flex  rounded-md">
                 <input
+                  onChange={handleChange}
                   value={applicationData.course_year}
                   name="course_year"
                   placeholder="Course and Year"

@@ -34,6 +34,7 @@ function App() {
           <Route path="/setup" element={<SetupCompany />} />
           <Route path="/profile" element={<ViewProfile />} />
           <Route path="/applications-list" element={<ApplicationsList />} />
+          <Route path="/application/:job_id" element={<Applying />} />
           <Route
             path="/user-dashboard"
             element={
@@ -54,7 +55,6 @@ function App() {
           />
           <Route path="/company-login" element={<LoginCompany />} />
           <Route path="/applicants-list" element={<ApplicantsList />} />
-          <Route path="/application" element={<Applying />} />
         </Routes>
       </BrowserRouter>
     </>

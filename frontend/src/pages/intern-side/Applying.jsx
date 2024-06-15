@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PersonalInformation from "../../components/application_steps/1PersonalInformation";
 import UploadRequirements from "../../components/application_steps/2UploadRequirements";
 import GTKY from "../../components/application_steps/3GTKY";
@@ -7,9 +7,26 @@ import StepperHorizontal from "../../components/StepperHorizontal";
 import { StepperContext } from "../../context/StepperContext";
 import { useContext } from "react";
 import Modal from "../../components/Modal";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 const Applying = () => {
-  const [applicationData, setApplicationData] = useState({});
+  const navigate = useNavigate();
+  const { job_id } = useParams();
+  const [jobData, setJobData] = useState({});
+  const [applicationData, setApplicationData] = useState({
+    last_name: "",
+    first_name: "",
+    middle_initial: "",
+    gender: "",
+    nationality: "",
+    birthdate: "",
+    address: "",
+    contact_no: "",
+    email_address: "",
+    facebook_link: "",
+    school: "",
+    course_year: "",
+  });
   const [currentStep, setCurrentStep] = useState(1);
   const [finalData, setFinalData] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -19,6 +36,21 @@ const Applying = () => {
     "Getting to Know You",
   ];
 
+  useEffect(() => {
+    const fetchJobData = async () => {
+      try {
+        const response = await fetch(`/api/posting/${job_id}/get-one-posting`);
+        const data = await response.json();
+        if (data.success) {
+          setJobData(data.post);
+          console.log(data.post);
+        }
+      } catch (error) {
+        console.log("error fetching data: ", error);
+      }
+    };
+    fetchJobData();
+  }, [job_id]);
   const displayStep = (step) => {
     switch (step) {
       case 1:
@@ -26,7 +58,7 @@ const Applying = () => {
       case 2:
         return <UploadRequirements />;
       case 3:
-        return <GTKY />;
+        return <GTKY jobInfo={jobData} />;
       default:
     }
   };

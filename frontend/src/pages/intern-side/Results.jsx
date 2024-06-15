@@ -179,9 +179,7 @@ const Results = () => {
               <p className="font-semibold text-xl mb-2 text-[#056480]">
                 Role Description
               </p>
-              <p className="my-5">
-                {renderParagraphs(selectedJob.role_description)}
-              </p>
+              {renderParagraphs(selectedJob.role_description)}
               <p className="font-semibold text-xl my-5 text-[#056480]">
                 Requirements
               </p>
@@ -195,7 +193,7 @@ const Results = () => {
             </div>
             <div className="flex flex-row justify-center mt-16">
               <Link
-                to="/application"
+                to={`/application/${selectedJob._id}`}
                 type="button"
                 className="text-white bg-[#056480] hover:bg-[#056380d5] w-1/3 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
               >
