@@ -39,12 +39,26 @@ export const send_application = async (req, res, next) => {
   });
   console.log(newApplication);
   try {
+    const existingApplication = await Application.findOne({
+      user_id: req.user.id,
+      job_id: job_id,
+    });
+
+    if (existingApplication) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already applied for this job.",
+      });
+    }
     const application = await newApplication.save();
+
+    console.log("existing application", existingApplication);
     res.status(201).json({
       success: true,
       message: "Application submitted successfully",
       application: application,
     });
+    console.log("application", application);
   } catch (error) {
     console.error(error);
     next(errorHandler(550, "Error submitting application"));

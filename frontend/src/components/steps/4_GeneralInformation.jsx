@@ -110,7 +110,7 @@ const GeneralInformation = () => {
             Paid or unpaid
           </h3>
 
-          <div class="flex items-center mb-2">
+          <div className="flex items-center mb-2">
             <input
               id="paid-radio"
               type="radio"
@@ -118,16 +118,16 @@ const GeneralInformation = () => {
               name="internship_type"
               checked={userData["internship_type"] === "paid"}
               onChange={handleRadioChange}
-              class="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
-              for="default-radio-1"
-              class="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
+              htmlFor="default-radio-1"
+              className="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
             >
               Paid
             </label>
           </div>
-          <div class="flex items-center">
+          <div className="flex items-center">
             <input
               id="unpaid-radio"
               type="radio"
@@ -135,11 +135,11 @@ const GeneralInformation = () => {
               name="internship_type"
               checked={userData["internship_type"] === "unpaid"}
               onChange={handleRadioChange}
-              class="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
-              for="default-radio-2"
-              class="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
+              htmlFor="default-radio-2"
+              className="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
             >
               Unpaid
             </label>
@@ -153,7 +153,7 @@ const GeneralInformation = () => {
             Internship Setup
           </h3>
 
-          <div class="flex items-center mb-2">
+          <div className="flex items-center mb-2">
             <input
               id="remote-radio"
               type="radio"
@@ -161,16 +161,16 @@ const GeneralInformation = () => {
               name="internship_setup"
               checked={userData["internship_setup"] === "remote"}
               onChange={handleRadioChange}
-              class="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
-              for="default-radio-1"
-              class="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
+              htmlFor="default-radio-1"
+              className="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
             >
               Remote
             </label>
           </div>
-          <div class="flex items-center mb-2">
+          <div className="flex items-center mb-2">
             <input
               id="onsite-radio"
               type="radio"
@@ -178,16 +178,16 @@ const GeneralInformation = () => {
               name="internship_setup"
               checked={userData["internship_setup"] === "onsite"}
               onChange={handleRadioChange}
-              class="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
-              for="default-radio-2"
-              class="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
+              htmlFor="default-radio-2"
+              className="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
             >
               On-site
             </label>
           </div>
-          <div class="flex items-center">
+          <div className="flex items-center">
             <input
               id="hybrid-radio"
               type="radio"
@@ -195,11 +195,11 @@ const GeneralInformation = () => {
               name="internship_setup"
               checked={userData["internship_setup"] === "hybrid"}
               onChange={handleRadioChange}
-              class="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-4 h-4 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
             <label
-              for="default-radio-2"
-              class="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
+              htmlFor="default-radio-2"
+              className="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300"
             >
               Hybrid
             </label>
@@ -221,7 +221,7 @@ const GeneralInformation = () => {
               name="academic_requirements"
               className="form-checkbox h-4 w-4 text-[#056480] rounded-sm border-2"
             />
-            <span class="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300">
+            <span className="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300">
               Academic Requirements
             </span>
           </li>
@@ -233,7 +233,7 @@ const GeneralInformation = () => {
               name="voluntary_internship"
               className="form-checkbox h-4 w-4 text-[#056480] rounded-sm border-2"
             />
-            <span class="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300">
+            <span className="ms-2 lg:text-md sm:text-sm text-sm font-regular dark:text-gray-300">
               Voluntary Internship
             </span>
           </li>

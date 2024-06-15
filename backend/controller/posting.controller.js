@@ -42,3 +42,22 @@ export const get_all_postings = async (req, res, next) => {
     next(errorHandler(550, "Error getting postings"));
   }
 };
+
+export const get_one_posting = async (req, res, next) => {
+  const { job_id } = req.params;
+  try {
+    const post = await JobPosting.findById(job_id);
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Job does not exist",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      post: post,
+    });
+  } catch (error) {
+    next(errorHandler(550, "Error getting job data"));
+  }
+};

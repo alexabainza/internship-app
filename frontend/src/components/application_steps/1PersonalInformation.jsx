@@ -47,8 +47,8 @@ const PersonalInformation = () => {
               <div className="my-1 flex  rounded-md">
                 <input
                   onChange={handleChange}
-                  value={applicationData.last_name}
-                  name="last_name"
+                  value={applicationData.first_name}
+                  name="first_name"
                   placeholder="First Name"
                   required
                   className="py-2 px-4 appearance-none outline-none border-none w-full text-gray-800 bg-[#EDEDF0] rounded-lg"

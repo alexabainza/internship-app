@@ -8,9 +8,11 @@ import { StepperContext } from "../../context/StepperContext";
 import { useContext } from "react";
 import Modal from "../../components/Modal";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 const Applying = () => {
   const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.user);
   const { job_id } = useParams();
   const [jobData, setJobData] = useState({});
   const [applicationData, setApplicationData] = useState({
@@ -30,6 +32,8 @@ const Applying = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [finalData, setFinalData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState();
+
   const steps = [
     "Personal Information",
     "Upload Requirements",
@@ -51,6 +55,7 @@ const Applying = () => {
     };
     fetchJobData();
   }, [job_id]);
+
   const displayStep = (step) => {
     switch (step) {
       case 1:
@@ -75,8 +80,25 @@ const Applying = () => {
     }
   };
 
-  const handleSubmit = () => {
-    setShowModal(true);
+  const handleSubmit = async () => {
+    try {
+      const res = await fetch(`/api/application/${job_id}/apply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(applicationData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setError(data.message);
+      } else {
+        console.log("data returned", data);
+        setShowModal(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className="pt-28 min-h-screen shadow-xl pb-2 bg-white lg:px-16 md:px-8 sm:px-2 px-2 overflow-auto">
