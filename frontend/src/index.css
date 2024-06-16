@@ -1,5 +1,7 @@
 @import "tailwindcss/tailwind.css";
 @import "flowbite";
+@import "daisyui/dist/full.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
