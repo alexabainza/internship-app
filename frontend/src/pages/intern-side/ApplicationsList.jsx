@@ -13,7 +13,6 @@ const ApplicationsList = () => {
         const data = await response.json();
         if (data.success) {
           setApplications(data.applications);
-          console.log(data.applications);
         }
       } catch (error) {
         console.error("Error fetching company data:", error);

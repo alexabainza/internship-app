@@ -7,7 +7,6 @@ const PersonalInformation = () => {
   const { applicationData, setApplicationData } = useContext(StepperContext);
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setApplicationData({ ...applicationData, [name]: value });
   };
 

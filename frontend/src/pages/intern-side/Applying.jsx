@@ -47,7 +47,6 @@ const Applying = () => {
         const data = await response.json();
         if (data.success) {
           setJobData(data.post);
-          console.log(data.post);
         }
       } catch (error) {
         console.log("error fetching data: ", error);
@@ -93,8 +92,8 @@ const Applying = () => {
       if (data.success === false) {
         setError(data.message);
       } else {
-        console.log("data returned", data);
         setShowModal(true);
+        navigate("/applications-list");
       }
     } catch (error) {
       console.error(error);

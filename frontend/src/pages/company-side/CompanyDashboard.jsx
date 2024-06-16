@@ -21,7 +21,7 @@ const CompanyDashboard = () => {
       }
     };
     fetchCompanyPostings();
-  }, [currentUser._id, postings]);
+  }, [currentUser._id]);
 
   const handleDeletePosting = async (postingId) => {
     try {

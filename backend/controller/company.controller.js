@@ -3,6 +3,7 @@ import { errorHandler } from "../utils/error.js";
 import Company from "../models/company.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import Application from "../models/application.model.js";
 
 export const create_post = async (req, res, next) => {
   const {
@@ -134,5 +135,25 @@ export const edit_company_data = async (req, res, next) => {
       .json(rest);
   } catch (error) {
     next(error);
+  }
+};
+
+export const get_job_applicants = async (req, res, next) => {
+  const { job_id } = req.params;
+  try {
+    const applicants = await Application.find({
+      job_id: job_id,
+    })
+      .populate("job_id")
+      .exec();
+
+    const jobPosting = await JobPosting.findById(job_id).select("job_title");
+    res.status(200).json({
+      success: true,
+      applicants: applicants,
+      job_title: jobPosting.job_title,
+    });
+  } catch (error) {
+    next(errorHandler(550, "Error fetching applicants"));
   }
 };

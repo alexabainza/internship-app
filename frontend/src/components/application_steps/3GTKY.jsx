@@ -8,7 +8,6 @@ const GTKY = ({ jobInfo }) => {
   const [questions, setQuestions] = useState([]);
 
   const handleChange = (index, value) => {
-    console.log(index, value);
     const newResponses = [...applicationData.responses];
     newResponses[index] = value;
     setApplicationData({ ...applicationData, responses: newResponses });
@@ -21,7 +20,6 @@ const GTKY = ({ jobInfo }) => {
         .filter((q) => q.trim() !== "")
         .map((q) => q.trim() + "?");
       setQuestions(formattedQuestions);
-      console.log(formattedQuestions);
       if (!applicationData.responses) {
         setApplicationData({
           ...applicationData,

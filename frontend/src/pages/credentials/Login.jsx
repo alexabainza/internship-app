@@ -47,7 +47,7 @@ const Login = () => {
         return;
       }
       dispatch(signInSuccess(data));
-      navigate("/user-dashboard");
+      navigate("/results");
     } catch (error) {
       dispatch(signInFailure(error.message));
     }

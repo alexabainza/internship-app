@@ -47,11 +47,8 @@ const UpdateCompany = () => {
           `/api/company/${currentUser.company_username}`
         );
         const data = await response.json();
-        console.log(data);
         if (data.success) {
           setCompanyData(data.companyDetails);
-        } else {
-          console.log("Error fetching data");
         }
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -66,7 +63,6 @@ const UpdateCompany = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(e.target.name, e.target.value);
     setCompanyData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -95,7 +91,6 @@ const UpdateCompany = () => {
     e.preventDefault();
     try {
       dispatch(updateCompanyStart());
-      console.log(companyData);
       const res = await fetch(
         `/api/company/${currentUser.company_username}/edit`,
         {

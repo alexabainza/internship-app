@@ -35,8 +35,8 @@ export const send_application = async (req, res, next) => {
     school,
     course_year,
     responses,
+    status: "to be viewed",
   });
-  console.log(newApplication);
   try {
     const existingApplication = await Application.findOne({
       user_id: req.user.id,
@@ -51,13 +51,11 @@ export const send_application = async (req, res, next) => {
     }
     const application = await newApplication.save();
 
-    console.log("existing application", existingApplication);
     res.status(201).json({
       success: true,
       message: "Application submitted successfully",
       application: application,
     });
-    console.log("application", application);
   } catch (error) {
     console.error(error);
     next(errorHandler(550, "Error submitting application"));
@@ -75,5 +73,13 @@ export const get_applications = async (req, res, next) => {
     });
   } catch (error) {
     next(errorHandler(550, "Error getting applications!"));
+  }
+};
+
+export const edit_application = async (req, res, next) => {
+  const { application_id } = req.params;
+  const updateData = req.body;
+  if (req.user.role === "Student") {
+    delete updateData.status;
   }
 };

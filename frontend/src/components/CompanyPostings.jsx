@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { lightTheme } from "../styles/theme";
 import { FaBinoculars, FaEye, FaEllipsisV } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
 const CompanyPostings = ({ posting, onDelete }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="text-black lg:h-36 lg:px-8 md:px-4 sm:px-4 px-4 py-4 bg-white rounded-lg flex">
       <div className="lg:w-2/5 sm:w-full w-full  flex flex-col gap-3 justify-between border-2">
-        <div className="flex flex-col">
+        <Link to={`/${posting._id}/applicants`} className="flex flex-col">
           <h1
             className="font-bold text-2xl"
             style={{ color: lightTheme.primary }}
@@ -31,7 +33,7 @@ const CompanyPostings = ({ posting, onDelete }) => {
               {posting.first_name} {posting.last_name}
             </span>
           </p>
-        </div>
+        </Link>
 
         <div className="flex">
           <button

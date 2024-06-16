@@ -63,6 +63,12 @@ const applicationSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    status: {
+      type: String,
+      enum: ["for interview", "rejected", "for screening", "to be viewed"],
+      default: "to be viewed",
+      required: true,
+    },
   },
   { timestamps: true }
 );

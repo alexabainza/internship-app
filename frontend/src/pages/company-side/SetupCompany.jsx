@@ -114,7 +114,6 @@ const SetupCompany = () => {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(progress);
         setFilePerc(Math.round(progress));
       },
       (error) => {

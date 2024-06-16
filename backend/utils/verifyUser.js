@@ -23,6 +23,7 @@ export const verifyStudent = (req, res, next) => {
 export const verifyCompany = (req, res, next) => {
   verifyToken(req, res, () => {
     if (req.user.role === "Company") {
+      console.log("role is: ", req.user.role);
       next();
     } else {
       res.status(403).json("You are not allowed to access this page!");

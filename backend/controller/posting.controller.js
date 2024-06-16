@@ -19,7 +19,9 @@ export const delete_posting = async (req, res, next) => {
   if (!post) {
     return next(errorHandler(404, "Posting not found"));
   }
-  if (req.user.id !== post.company_id) {
+  console.log("req user", req.user.id);
+  console.log("comppany id", post.company_id);
+  if (req.user.id !== post.company_id.toString()) {
     return next(errorHandler(401, "You can only delete your own listings"));
   }
 
@@ -33,7 +35,7 @@ export const delete_posting = async (req, res, next) => {
 
 export const get_all_postings = async (req, res, next) => {
   try {
-    const all_posts = await JobPosting.find().populate("company_id");
+    const all_posts = await JobPosting.find().populate("company_id").exec();
     res.status(200).json({
       success: true,
       postings: all_posts,

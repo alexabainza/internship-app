@@ -23,3 +23,11 @@ export const formatDate = (dateString) => {
   const options = { month: "long", day: "numeric", year: "numeric" };
   return date.toLocaleDateString("en-US", options);
 };
+
+export const formatQuestions = (questions) => {
+  const formattedQuestions = questions
+    .split("?")
+    .filter((q) => q.trim() !== "")
+    .map((q) => q.trim() + "?");
+  return formattedQuestions;
+};

@@ -54,7 +54,15 @@ function App() {
             }
           />
           <Route path="/company-login" element={<LoginCompany />} />
-          <Route path="/applicants-list" element={<ApplicantsList />} />
+          <Route
+            path="/:job_id/applicants"
+            element={
+              <ProtectedRoute
+                element={ApplicantsList}
+                allowedRoles={["Company"]}
+              />
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>

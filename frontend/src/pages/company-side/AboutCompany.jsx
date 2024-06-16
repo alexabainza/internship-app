@@ -20,8 +20,6 @@ const AboutCompany = () => {
         const data = await response.json();
         if (data.success) {
           setCompanyData(data.companyDetails);
-        } else {
-          console.log("Error fetching data");
         }
       } catch (error) {
         console.error("Error fetching company data:", error);
