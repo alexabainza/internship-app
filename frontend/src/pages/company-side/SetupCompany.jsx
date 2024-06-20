@@ -4,6 +4,8 @@ import Dropdown from "../../components/Dropdown";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { app } from "../../firebase";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Modal from "../../components/Modal";
 import {
   getDownloadURL,
   getStorage,
@@ -22,6 +24,24 @@ const SetupCompany = () => {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [preview, setPreview] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [errors, setErrors] = useState({
+    company_name: "",
+    company_address: "",
+    industry: "",
+    company_size: "",
+    company_description: "",
+    company_logo: "",
+    company_email: "",
+    company_contact_no: "",
+    company_website: "",
+    company_username: "",
+    password: "",
+  });
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
   const fileInputRef = useRef(null);
   const [userData, setUserData] = useState({
     company_name: "",
@@ -64,6 +84,10 @@ const SetupCompany = () => {
       ...prevData,
       [name]: value,
     }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
   };
 
   const handleSelect = (name, option) => {
@@ -75,6 +99,16 @@ const SetupCompany = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = {};
+    Object.keys(userData).forEach((key) => {
+      if (!userData[key]) {
+        newErrors[key] = `${key.replace(/_/g, " ")} is required`;
+      }
+    });
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     try {
       dispatch(signInStart());
       const res = await fetch("/api/auth/setup", {
@@ -90,6 +124,7 @@ const SetupCompany = () => {
         return;
       }
       dispatch(signInSuccess({ ...data.companyDetails }));
+      setShowModal(true);
       navigate("/company-dashboard");
     } catch (error) {
       dispatch(signInFailure(error.message));
@@ -173,9 +208,12 @@ const SetupCompany = () => {
                 name="company_name"
                 placeholder="Company Name"
                 required
-                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800 bg-white"
               />
             </div>
+            {errors.company_name && (
+              <p className="text-red-500 text-xs mt-1">{errors.company_name}</p>
+            )}
           </div>
           <div className="flex flex-col">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
@@ -188,9 +226,14 @@ const SetupCompany = () => {
                 name="company_address"
                 placeholder="Company Address"
                 required
-                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800 bg-white"
               />
             </div>
+            {errors.company_address && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.company_address}
+              </p>
+            )}
           </div>
           <div className="flex gap-4">
             <div className="flex flex-col w-full mt-2">
@@ -229,6 +272,11 @@ const SetupCompany = () => {
                   </div>
                 </div>
               )}
+              {errors.company_logo && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.company_logo}
+                </p>
+              )}
             </div>
           </div>
           <div className="flex flex-col mb-1">
@@ -239,6 +287,9 @@ const SetupCompany = () => {
               options={industry}
               onSelect={(option) => handleSelect("industry", option)}
             />
+            {errors.industry && (
+              <p className="text-red-500 text-xs mt-1">{errors.industry}</p>
+            )}
           </div>
           <div className="flex flex-col mb-1">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
@@ -248,6 +299,9 @@ const SetupCompany = () => {
               options={companySize}
               onSelect={(option) => handleSelect("company_size", option)}
             />
+            {errors.company_size && (
+              <p className="text-red-500 text-xs mt-1">{errors.company_size}</p>
+            )}
           </div>
         </section>
         <section className="flex flex-col">
@@ -273,36 +327,13 @@ const SetupCompany = () => {
                   rows="6"
                 />
               </div>
-            </div>
-          </div>
-          {/* <div className="flex gap-4">
-            <div className="flex flex-col w-full mt-2">
-              <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
-                Logo
-              </div>
-              <div className="bg-white my-1 p-1 flex border rounded-md">
-                <input
-                  onChange={(e) => setFile(e.target.files[0])}
-                  type="file"
-                  id="myFile"
-                  name="filename"
-                  accept="image/*"
-                />
-              </div>
-              {preview && (
-                <div className="mt-4">
-                  <p className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
-                    Logo Preview
-                  </p>
-                  <img
-                    src={preview}
-                    alt="Company Logo Preview"
-                    className="w-32 h-32 object-cover border rounded-md"
-                  />
-                </div>
+              {errors.company_description && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.company_description}
+                </p>
               )}
             </div>
-          </div> */}
+          </div>
           <div className="flex flex-col">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
               Company Email
@@ -314,9 +345,14 @@ const SetupCompany = () => {
                 name="company_email"
                 placeholder="Company Email"
                 required
-                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+                className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
               />
             </div>
+            {errors.company_email && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.company_email}
+              </p>
+            )}
           </div>
           <div className="flex flex-col">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
@@ -329,9 +365,14 @@ const SetupCompany = () => {
                 name="company_contact_no"
                 placeholder="Company Contact Number"
                 required
-                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+                className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
               />
             </div>
+            {errors.company_contact_no && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.company_contact_no}
+              </p>
+            )}
           </div>
           <div className="flex gap-4">
             <div className="flex flex-col w-full ">
@@ -345,9 +386,14 @@ const SetupCompany = () => {
                   name="company_website"
                   placeholder="Enter company website here"
                   required
-                  className="p-1 px-2 appearance-none border-none outline-none w-full text-gray-800"
+                  className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
                 />
               </div>
+              {errors.company_website && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.company_website}
+                </p>
+              )}
             </div>
           </div>
         </section>
@@ -369,25 +415,46 @@ const SetupCompany = () => {
                 name="company_username"
                 placeholder="Username"
                 required
-                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+                className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
               />
             </div>
+            {errors.company_username && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.company_username}
+              </p>
+            )}
           </div>
           <div className="flex flex-col">
             <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
               Password
             </div>
-            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md items-center">
               <input
                 onChange={handleChange}
                 value={userData.password}
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Company Password"
                 required
-                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+                className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
               />
+              {showPassword ? (
+                <FaEyeSlash
+                  className="absolute right-20 cursor-pointer"
+                  onClick={toggleShowPassword}
+                  size={20}
+                />
+              ) : (
+                <FaEye
+                  className="absolute right-20 cursor-pointer"
+                  onClick={toggleShowPassword}
+                  size={20}
+                />
+              )}
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
           </div>
         </section>
         <div className="flex justify-end">
@@ -400,6 +467,7 @@ const SetupCompany = () => {
           </button>
         </div>
       </form>
+      <Modal show={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
 };

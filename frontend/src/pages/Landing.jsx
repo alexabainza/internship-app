@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
-    <div className="lg:mt-20 md:mt-24 sm:mt-28 mt-28 min-h-screen md:gap-8 sm:gap-8 gap-8 flex lg:mx-24 md:mx-20 sm:mx-8 mx-8 lg:flex-row md:flex-row sm:flex-col flex-col">
+    <div className="lg:pt-20 md:pt-24 sm:pt-28 pt-28 min-h-screen md:gap-8 sm:gap-8 gap-8 flex lg:mx-24 md:mx-20 sm:mx-8 mx-8 lg:flex-row md:flex-row sm:flex-col flex-col">
       <div className="flex flex-col text-white gap-6 justify-center items-center  lg:w-3/5 md:w-full sm:w-full w-full">
         <div className="flex flex-col gap-8">
           <h1 className="lg:text-7xl md:text-5xl sm:text-3xl text-3xl font-semibold ">

@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import icon from "../assets/Carbs.svg";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../src/redux/user/userSlice";
-import { current } from "@reduxjs/toolkit";
 import { lightTheme } from "../styles/theme";
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
-  const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -83,70 +85,63 @@ function Navbar() {
           id="navbar-default"
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 font-light border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
-            <li>
-              {currentUser ? (
-                <button className="text-white" onClick={handleLogout}>
-                  Logout
-                </button>
-              ) : (
-                <Link
-                  to="/filter"
-                  className={`block py-2 px-3 text-sm text-white rounded 
-                  ${
-                    location.pathname === "/filter" ? "active" : ""
-                  } hover:text-[#97EFE9]`}
-                  aria-current="page"
-                >
-                  filter.
-                </Link>
-              )}
-            </li>
-            <li>
-              {currentUser ? (
-                <div className=""></div>
-              ) : (
-                <Link
-                  to="/results"
-                  className={`block py-2 px-3 text-sm text-white rounded 
-                  ${
-                    location.pathname === "results" ? "active" : ""
-                  } hover:text-[#97EFE9]`}
-                  aria-current="page"
-                >
-                  results.
-                </Link>
-              )}
-            </li>
+            {/*profile pic */}
             <li className="flex gap-4 items-center align-middle">
-              {currentUser?.company_logo ? (
-                <img
-                  className="rounded-full h-7 w-7 object-cover"
-                  src={currentUser.company_logo}
-                  alt="profile"
-                ></img>
-              ) : (
-                <div
-                  className="ml-4 text-md font-semibold flex items-center justify-center h-7 w-7 rounded-full text-white"
-                  style={{
-                    backgroundColor: lightTheme.green,
-                    color: lightTheme.primary,
-                  }}
-                >
-                  {firstLetter}
-                </div>
-              )}
-
               {currentUser ? (
-                <Link
-                  to={`/${currentUser.company_username}`}
-                  className="text-white text-md font-medium"
-                >
-                  {currentUser.role === "Student"
-                    ? currentUser.username
-                    : currentUser.company_name}
-                </Link>
+                currentUser?.company_logo ? (
+                  <img
+                    className="rounded-full h-7 w-7 object-cover"
+                    src={currentUser.company_logo}
+                    alt="profile"
+                  ></img>
+                ) : (
+                  <div
+                    className="ml-4 text-md font-semibold flex items-center justify-center h-7 w-7 rounded-full text-white"
+                    style={{
+                      backgroundColor: lightTheme.green,
+                      color: lightTheme.primary,
+                    }}
+                  >
+                    {firstLetter}
+                  </div>
+                )
               ) : (
-                <p className="text-white">Login</p>
+                <></>
+              )}
+              {currentUser ? (
+                <div className="relative">
+                  <button
+                    onClick={toggleMenu}
+                    className="text-white text-md font-medium focus:outline-none"
+                  >
+                    {currentUser.role === "Student"
+                      ? currentUser.username
+                      : currentUser.company_name}
+                  </button>
+                  {isMenuOpen && (
+                    <div className="absolute right-0 mt-4 w-48 bg-[#056480] text-white font-semibold rounded-lg shadow-lg">
+                      <Link
+                        to={
+                          currentUser.role === "Student"
+                            ? `/${currentUser.username}`
+                            : `/${currentUser.company_name}`
+                        }
+                        className="block px-4 py-2  hover:bg-gray-200"
+                        onClick={closeMenu}
+                      >
+                        Profile
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2  hover:bg-gray-200"
+                      >
+                        Log Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-white"></p>
               )}
             </li>
           </ul>

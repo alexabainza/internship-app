@@ -1,8 +1,8 @@
 import express from "express";
-import { test } from "../controller/user.controller.js";
+import { get_profile_data } from "../controller/user.controller.js";
 
 const router = express.Router();
 
-router.get("/test", test);
+router.get("/:username", get_profile_data);
 
 export default router;

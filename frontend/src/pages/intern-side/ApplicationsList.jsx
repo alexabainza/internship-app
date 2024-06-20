@@ -7,12 +7,14 @@ const ApplicationsList = () => {
   const [applications, setApplications] = useState([]);
 
   useEffect(() => {
+    console.log("fetching data");
     const fetchApplications = async () => {
       try {
         const response = await fetch(`/api/application/get-applications`);
         const data = await response.json();
         if (data.success) {
           setApplications(data.applications);
+          console.log(data.applications);
         }
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -33,11 +35,15 @@ const ApplicationsList = () => {
         >
           Your Applications
         </h1>
-        <div className="flex flex-col gap-2">
-          {applications.map((application, index) => (
-            <Applications application={application} key={application._id} />
-          ))}
-        </div>
+        {applications.length < 0 ? (
+          <p>You have not applied to any internships yet!</p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {applications.map((application, index) => (
+              <Applications application={application} key={application._id} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

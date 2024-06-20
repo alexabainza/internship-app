@@ -5,9 +5,18 @@ import jwt from "jsonwebtoken";
 import Company from "../models/company.model.js";
 
 export const register = async (req, res, next) => {
-  const { username, email, password } = req.body;
+  const { first_name, last_name, school, course, username, email, password } =
+    req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
-  const newUser = new User({ username, email, password: hashedPassword });
+  const newUser = new User({
+    first_name,
+    last_name,
+    school,
+    course,
+    username,
+    email,
+    password: hashedPassword,
+  });
   try {
     const savedUser = await newUser.save();
     const { password, ...userDetails } = savedUser._doc;
@@ -96,6 +105,7 @@ export const registerCompany = async (req, res, next) => {
       .status(201)
       .json({ success: true, companyDetails });
   } catch (error) {
+    console.log(error);
     next(errorHandler(550, "Error registering company"));
   }
 };

@@ -51,7 +51,7 @@ const Results = () => {
     fetchPostings();
   }, []);
   return (
-    <div className="pt-16 min-h-screen w-full flex lg:flex-row sm:flex-col flex-col">
+    <div className="pt-16 min-h-screen w-full flex lg:flex-row md:flex-row sm:flex-col flex-col">
       <div className="pt-10 px-10 bg-white w-1/3 overflow-y-auto custom-scrollbar">
         <form className="max-w-screen mx-auto" style={{ width: "100%" }}>
           <div className="relative">
