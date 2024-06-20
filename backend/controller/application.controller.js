@@ -78,8 +78,54 @@ export const get_applications = async (req, res, next) => {
 
 export const edit_application = async (req, res, next) => {
   const { application_id } = req.params;
-  const updateData = req.body;
+  let updateData = req.body;
+
   if (req.user.role === "Student") {
+    if (updateData.hasOwnProperty("status")) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to change the status of the application.",
+      });
+    }
     delete updateData.status;
+  } else if (req.user.role === "Company") {
+    if (!updateData.hasOwnProperty("status")) {
+      return res.status(400).json({
+        success: false,
+        message: "No status provided for update.",
+      });
+    }
+    updateData = { status: updateData.status };
+  } else {
+    return res.status(403).json({
+      success: false,
+      message: "You do not have permission to edit this application.",
+    });
+  }
+
+  try {
+    const application = await Application.findByIdAndUpdate(
+      application_id,
+      updateData,
+      {
+        new: true,
+      }
+    );
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Application updated successfully",
+      application: application,
+    });
+    console.log("updated", application);
+  } catch (error) {
+    next(errorHandler(550, "Error updating application!"));
   }
 };

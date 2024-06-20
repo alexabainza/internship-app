@@ -1,13 +1,71 @@
 import React, { useState } from "react";
-import logo1 from "../assets/logo1.jpg";
+import Modal from "./Modal";
 
 const ApplicantBox = ({ applicant, onClick, selected }) => {
   const [status, setStatus] = useState(applicant.status);
-  const handleStatusChange = (newStatus) => {
-    setStatus(newStatus);
-    console.log(newStatus);
+  const [showFirstModal, setShowFirstModal] = useState(false);
+  const [showSecondModal, setShowSecondModal] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    message: "",
+    buttonLabel: "",
+  });
+  const handleStatusChange = async (newStatus) => {
+    setShowFirstModal(true);
+    switch (newStatus) {
+      case "for screening":
+        setModalContent({
+          title: "Prescreen Applicant",
+          message: "The applicant has been marked for prescreening.",
+          buttonLabel: "OK",
+        });
+        break;
+      case "for interview":
+        setModalContent({
+          title: "Interview Applicant",
+          message: "The applicant has been marked for interview.",
+          buttonLabel: "OK",
+        });
+        break;
+      case "not suitable":
+        setModalContent({
+          title: "Not Suitable",
+          message: "The applicant has been marked as not suitable.",
+          buttonLabel: "OK",
+        });
+        break;
+      default:
+        break;
+    }
+    try {
+      const res = await fetch(
+        `/api/application/edit_application_status/${applicant._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+      const data = await res.json();
+
+      if (data.success) {
+        setStatus(newStatus);
+        setShowSecondModal(true);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  const handleCloseFirstModal = () => {
+    setShowFirstModal(false);
+    setShowSecondModal(true);
   };
 
+  const handleCloseSecondModal = () => {
+    setShowSecondModal(false);
+  };
   return (
     <div className="h-full" onClick={onClick}>
       <div
@@ -53,6 +111,20 @@ const ApplicantBox = ({ applicant, onClick, selected }) => {
           </div>
         </div>
       </div>
+      <Modal
+        show={showFirstModal}
+        onClose={handleCloseFirstModal}
+        title={modalContent.title}
+        message={modalContent.message}
+        buttonLabel={modalContent.buttonLabel}
+      />
+      <Modal
+        show={showSecondModal}
+        onClose={handleCloseSecondModal}
+        title="Status Updated"
+        message="The applicant's status has been successfully updated."
+        buttonLabel="Close"
+      />
     </div>
   );
 };
