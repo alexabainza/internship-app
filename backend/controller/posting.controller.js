@@ -19,8 +19,7 @@ export const delete_posting = async (req, res, next) => {
   if (!post) {
     return next(errorHandler(404, "Posting not found"));
   }
-  console.log("req user", req.user.id);
-  console.log("comppany id", post.company_id);
+
   if (req.user.id !== post.company_id.toString()) {
     return next(errorHandler(401, "You can only delete your own listings"));
   }

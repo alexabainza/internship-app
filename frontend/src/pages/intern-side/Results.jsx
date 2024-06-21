@@ -15,6 +15,9 @@ import { Link } from "react-router-dom";
 const Results = () => {
   const [postings, setPostings] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [savedJobs, setSavedJobs] = useState([]);
+  const [saveMessage, setSaveMessage] = useState("");
+
   let internshipTypeMessage = "";
   if (selectedJob) {
     if (
@@ -33,6 +36,44 @@ const Results = () => {
     }
   }
 
+  const handleSaveJob = async (job, action) => {
+    console.log(action, " triggered");
+    let endpoint = `/api/savejob/${job._id}/save`;
+    let method = "POST";
+    if (action === "delete") {
+      endpoint = `/api/savejob/${job._id}/delete_saved`;
+      method = "DELETE";
+    }
+    try {
+      const res = await fetch(endpoint, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setSaveMessage(
+          action === "save" ? "Error saving job" : "Error deleting job"
+        );
+      }
+      setSaveMessage(
+        action === "save"
+          ? "Successfully saved job"
+          : "Successfully deleted job"
+      );
+      console.log("Successfully saved or deleted job");
+    } catch (error) {
+      console.error(error);
+    }
+    setSavedJobs((prevSavedJobs) => {
+      if (prevSavedJobs.includes(job._id)) {
+        return prevSavedJobs.filter((id) => id !== job._id);
+      } else {
+        return [...prevSavedJobs, job._id];
+      }
+    });
+  };
   useEffect(() => {
     const fetchPostings = async () => {
       try {
@@ -201,9 +242,17 @@ const Results = () => {
               </Link>
               <button
                 type="button"
+                onClick={() =>
+                  handleSaveJob(
+                    selectedJob,
+                    savedJobs.includes(selectedJob._id) ? "delete" : "save"
+                  )
+                }
                 className="text-white bg-[#056480] hover:bg-[#056380d5] w-1/3 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
               >
-                Save for later
+                {savedJobs.includes(selectedJob._id)
+                  ? "Delete from saved jobs"
+                  : "Save for later"}{" "}
               </button>
             </div>
           </>

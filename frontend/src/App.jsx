@@ -17,6 +17,7 @@ import CompanyDashboard from "./pages/company-side/CompanyDashboard";
 import ApplicantsList from "./pages/company-side/ApplicantsList";
 import Applying from "./pages/intern-side/Applying";
 import UpdateCompany from "./pages/company-side/UpdateCompany";
+import SavedJobs from "./pages/intern-side/SavedJobs";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
               />
             }
           />
+          <Route path="/saved-jobs" element={<SavedJobs />} />
           <Route path="/edit-company-profile" element={<UpdateCompany />} />
           <Route path="/company-dashboard" element={<CompanyDashboard />} />
           <Route path="/filter" element={<FilterAhead />} />{" "}

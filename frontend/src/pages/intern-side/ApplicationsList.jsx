@@ -36,7 +36,9 @@ const ApplicationsList = () => {
           Your Applications
         </h1>
         {applications.length < 0 ? (
-          <p>You have not applied to any internships yet!</p>
+          <p className="text-black text-2xl">
+            You have not applied to any internships yet!
+          </p>
         ) : (
           <div className="flex flex-col gap-2">
             {applications.map((application, index) => (
