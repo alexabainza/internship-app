@@ -24,31 +24,6 @@ const jobPostingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    company_name: {
-      type: String,
-      required: true,
-    },
-    industry: {
-      type: String,
-      required: true,
-    },
-    company_size: {
-      type: String,
-      required: true,
-    },
-    company_address: {
-      type: String,
-      required: true,
-    },
-    company_description: {
-      type: String,
-      required: true,
-    },
-    company_website: {
-      type: String,
-      required: true,
-    },
-
     job_title: {
       type: String,
       required: true,

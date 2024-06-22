@@ -35,9 +35,13 @@ const Results = () => {
         "Accepting both academic requirements and voluntary internships";
     }
   }
+  const isJobSaved = selectedJob && savedJobs.includes(selectedJob._id);
 
   const handleSaveJob = async (job, action) => {
     console.log(action, " triggered");
+    console.log("selected job id", selectedJob._id, "job id", job._id);
+    savedJobs.includes(selectedJob._id) ? "delete" : "save";
+
     let endpoint = `/api/savejob/${job._id}/save`;
     let method = "POST";
     if (action === "delete") {
@@ -89,6 +93,19 @@ const Results = () => {
         console.error("Error fetching company data:", error);
       }
     };
+    const fetchSavedJobs = async () => {
+      try {
+        const response = await fetch("/api/savejob/get-saved-jobs");
+        const data = await response.json();
+        if (data.success) {
+          setSavedJobs(data.saved_jobs);
+          console.log("Saved jobs", data.saved_jobs);
+        }
+      } catch (error) {
+        console.error("Error fetching saved jobs:", error);
+      }
+    };
+    fetchSavedJobs();
     fetchPostings();
   }, []);
   return (
@@ -243,16 +260,11 @@ const Results = () => {
               <button
                 type="button"
                 onClick={() =>
-                  handleSaveJob(
-                    selectedJob,
-                    savedJobs.includes(selectedJob._id) ? "delete" : "save"
-                  )
+                  handleSaveJob(selectedJob, isJobSaved ? "delete" : "save")
                 }
                 className="text-white bg-[#056480] hover:bg-[#056380d5] w-1/3 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2"
               >
-                {savedJobs.includes(selectedJob._id)
-                  ? "Delete from saved jobs"
-                  : "Save for later"}{" "}
+                {isJobSaved ? "Delete from saved jobs" : "Save for later"}{" "}
               </button>
             </div>
           </>

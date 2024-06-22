@@ -19,9 +19,10 @@ const ApplicantsList = () => {
         const data = await response.json();
         if (data.success) {
           setApplicants(data.applicants);
+          setJobTitle(data.job_title);
+
           if (data.applicants.length > 0) {
             setSelectedApplicant(data.applicants[0]);
-            setJobTitle(data.job_title);
             console.log("applicants", data.applicants);
           }
         }

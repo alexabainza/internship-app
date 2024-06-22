@@ -18,7 +18,6 @@ const AboutCompany = () => {
         );
         const data = await response.json();
         if (data.success) {
-          console.log(data);
           setUserData(
             currentUser.role === "Company"
               ? data.companyDetails

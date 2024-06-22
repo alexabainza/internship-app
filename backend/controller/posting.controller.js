@@ -1,3 +1,4 @@
+import Application from "../models/application.model.js";
 import JobPosting from "../models/job_posting.model.js";
 import { errorHandler } from "../utils/error.js";
 
@@ -5,11 +6,36 @@ export const get_company_postings = async (req, res, next) => {
   const { company_id } = req.params;
   try {
     const postings = await JobPosting.find({ company_id: company_id });
+    const postingsWithApplicantCounts = await Promise.all(
+      postings.map(async (posting) => {
+        const applicantCounts = await Application.aggregate([
+          { $match: { job_id: posting._id } },
+          { $group: { _id: "$status", count: { $sum: 1 } } },
+        ]);
+
+        const counts = applicantCounts.reduce((acc, curr) => {
+          acc[curr._id] = curr.count;
+          return acc;
+        }, {});
+
+        return {
+          ...posting._doc,
+          applicantCounts: {
+            total: await Application.countDocuments({ job_id: posting._id }),
+            forInterview: counts["for interview"] || 0,
+            notSuitable: counts["not suitable"] || 0,
+            forScreening: counts["for screening"] || 0,
+            toBeViewed: counts["to be viewed"] || 0,
+          },
+        };
+      })
+    );
     res.status(200).json({
       success: true,
-      postings,
+      postings: postingsWithApplicantCounts,
     });
   } catch (error) {
+    console.error(error);
     next(errorHandler(550, "Error getting postings"));
   }
 };

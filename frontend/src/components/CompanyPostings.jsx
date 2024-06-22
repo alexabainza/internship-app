@@ -5,9 +5,13 @@ import { Link } from "react-router-dom";
 
 const CompanyPostings = ({ posting, onDelete }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const handleDelete = () => {
+    onDelete();
+    setIsOpen(false);
+  };
   return (
     <div className="text-black lg:h-36 lg:px-8 md:px-4 sm:px-4 px-4 py-4 bg-white rounded-lg flex">
-      <div className="lg:w-2/5 sm:w-full w-full  flex flex-col gap-3 justify-between border-2">
+      <div className="lg:w-2/5 sm:w-full w-full  flex flex-col gap-3 justify-between ">
         <Link to={`/${posting._id}/applicants`} className="flex flex-col">
           <h1
             className="font-bold text-2xl"
@@ -57,14 +61,14 @@ const CompanyPostings = ({ posting, onDelete }) => {
         </div>
       </div>
       <div className="flex lg:w-3/5 sm:w-full w-full">
-        <div className="w-full border-2 flex flex-col py-2 justify-between">
+        <div className="w-full  flex flex-col py-2 justify-between">
           <div className="flex justify-between">
             <div className="flex flex-col gap-1 h-16 w-32  lg:justify-between items-center">
               <h1
                 className="lg:text-2xl sm:text-lg text-lg font-bold"
                 style={{ color: lightTheme.primary }}
               >
-                63
+                {posting.applicantCounts.toBeViewed}{" "}
               </h1>
               <p className="font-light lg:text-md sm:text-sm text-sm">
                 Unprocessed
@@ -75,7 +79,7 @@ const CompanyPostings = ({ posting, onDelete }) => {
                 className="lg:text-2xl sm:text-lg text-lg font-bold"
                 style={{ color: lightTheme.primary }}
               >
-                8
+                {posting.applicantCounts.forScreening}{" "}
               </h1>
               <p className="font-light lg:text-md sm:text-sm text-sm">
                 Shortlisted
@@ -86,7 +90,7 @@ const CompanyPostings = ({ posting, onDelete }) => {
                 className="lg:text-2xl sm:text-lg text-lg font-bold"
                 style={{ color: lightTheme.primary }}
               >
-                2
+                {posting.applicantCounts.forInterview}{" "}
               </h1>
               <p className="font-light lg:text-md sm:text-sm text-sm">
                 Interview
@@ -115,7 +119,7 @@ const CompanyPostings = ({ posting, onDelete }) => {
                 className="font-bold ms-2"
                 style={{ color: lightTheme.secondary }}
               >
-                72
+                {posting.applicantCounts.total}{" "}
               </span>
             </p>
           </div>
@@ -131,7 +135,7 @@ const CompanyPostings = ({ posting, onDelete }) => {
             <div className="absolute right-20 mt-2 w-48 bg-white shadow-lg rounded-md z-10">
               <button
                 className="w-full text-left px-4 py-4 text-sm hover:bg-red-800 hover:text-white rounded-md bg-red-500 text-white"
-                onClick={onDelete}
+                onClick={handleDelete}
               >
                 Delete
               </button>

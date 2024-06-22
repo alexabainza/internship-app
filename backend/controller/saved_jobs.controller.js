@@ -52,7 +52,6 @@ export const get_saved_jobs = async (req, res, next) => {
       path: "job_id",
       populate: { path: "company_id" },
     });
-    // .populate("company_id");
     res.status(200).json({
       success: true,
       saved_jobs: all_saved_jobs,

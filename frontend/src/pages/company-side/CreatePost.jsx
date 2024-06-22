@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Stepper from "../../components/Stepper";
 import StepperControl from "../../components/StepperControl";
-import CompanyInformation from "../../components/steps/1_CompanyInformation";
-import PostingGuidelines from "../../components/steps/2_PostingGuidelines";
-import CompanyProfile from "../../components/steps/3_CompanyProfile";
-import GeneralInformation from "../../components/steps/4_GeneralInformation";
+import PostingGuidelines from "../../components/steps/1_PostingGuidelines.jsx";
+import GeneralInformation from "../../components/steps/2_GeneralInformation.jsx";
 import { StepperContext } from "../../context/StepperContext";
-import JobDetails from "../../components/steps/5_JobDetails";
-import PostingPreview from "../../components/steps/6_PostingPreview";
+import JobDetails from "../../components/steps/3_JobDetails.jsx";
+import PostingPreview from "../../components/steps/4_PostingPreview.jsx";
 import {
   postingFailure,
   postingStart,
@@ -21,9 +19,7 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const steps = [
-    "Company Information",
     "Posting Guidelines",
-    "Company Profile",
     "General Information",
     "Job Details",
     "Posting Preview",
@@ -38,16 +34,12 @@ const CreatePost = () => {
   const displayStep = (step) => {
     switch (step) {
       case 1:
-        return <CompanyInformation />;
-      case 2:
         return <PostingGuidelines />;
-      case 3:
-        return <CompanyProfile />;
-      case 4:
+      case 2:
         return <GeneralInformation />;
-      case 5:
+      case 3:
         return <JobDetails />;
-      case 6:
+      case 4:
         return <PostingPreview />;
       default:
     }

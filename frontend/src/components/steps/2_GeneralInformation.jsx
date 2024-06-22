@@ -33,6 +33,79 @@ const GeneralInformation = () => {
           className="font-semibold lg:text-xl sm:text-lg text-lg mt-4"
           style={{ color: lightTheme.primary }}
         >
+          Contact Person
+        </h3>
+        <div className="flex lg:flex-row md:flex-row sm:flex-col flex-col lg:gap-4 sm:gap-0 gap-0">
+          <div className="flex flex-col lg:w-[50%] sm:w-full w-full">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+              First Name
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData["first_name"] || ""}
+                name="first_name"
+                placeholder="First Name"
+                required
+                className="p-1 px-2 appearance-none outline-none w-full text-gray-800 bg-white"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col lg:w-[50%] sm:w-full w-full">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+              Last Name
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData["last_name"] || ""}
+                name="last_name"
+                placeholder="Last Name"
+                required
+                className="p-1 px-2 appearance-none outline-none w-full text-gray-800 bg-white"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex lg:flex-row md:flex-row sm:flex-col flex-col lg:gap-4 sm:gap-0 gap-0">
+          <div className="flex flex-col lg:w-[50%] sm:w-full w-full">
+            <div className="font-bold h-6  text-gray-500 text-xs leading-8 uppercase">
+              Email
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData["email"] || ""}
+                name="email"
+                placeholder="sample@gmail.com"
+                type="email"
+                required
+                className="p-1 px-2 appearance-none outline-none border-none w-full bg-white text-gray-800"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col lg:w-[50%] sm:w-full w-full">
+            <div className="font-bold h-6  text-gray-500 text-xs leading-8 uppercase">
+              Contact Number
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData["contact_no"] || ""}
+                name="contact_no"
+                placeholder="0xxxxxxxxxx"
+                required
+                className="p-1 px-2 appearance-none outline-none border-none w-full bg-white text-gray-800"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h3
+          className="font-semibold lg:text-xl sm:text-lg text-lg mt-4"
+          style={{ color: lightTheme.primary }}
+        >
           General Information{" "}
         </h3>
 
@@ -46,7 +119,7 @@ const GeneralInformation = () => {
               value={userData["job_title"] || ""}
               name="job_title"
               placeholder="i.e. Software Developer, Data Scientist"
-              className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+              className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800 bg-white"
             />
           </div>
         </div>
@@ -68,7 +141,7 @@ const GeneralInformation = () => {
               value={userData["province"] || ""}
               name="province"
               placeholder="i.e. Cebu, Davao"
-              className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+              className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800 bg-white"
             />
           </div>
         </div>
@@ -82,7 +155,7 @@ const GeneralInformation = () => {
               value={userData["city"] || ""}
               name="city"
               placeholder="City"
-              className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+              className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800 bg-white"
             />
           </div>
         </div>
@@ -96,7 +169,7 @@ const GeneralInformation = () => {
               value={userData["specific_address"] || ""}
               name="specific_address"
               placeholder="Address"
-              className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+              className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800 bg-white"
             />
           </div>
         </div>

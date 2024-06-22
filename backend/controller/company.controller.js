@@ -12,12 +12,6 @@ export const create_post = async (req, res, next) => {
     last_name,
     email,
     contact_no,
-    company_name,
-    industry,
-    company_size,
-    company_address,
-    company_description,
-    company_website,
     job_title,
     province,
     city,
@@ -37,12 +31,6 @@ export const create_post = async (req, res, next) => {
     last_name,
     email,
     contact_no,
-    company_name,
-    industry,
-    company_size,
-    company_address,
-    company_description,
-    company_website,
     job_title,
     province,
     city,
@@ -148,10 +136,12 @@ export const get_job_applicants = async (req, res, next) => {
       .exec();
 
     const jobPosting = await JobPosting.findById(job_id).select("job_title");
+    const applicantCount = await Application.countDocuments({ job_id: job_id });
     res.status(200).json({
       success: true,
       applicants: applicants,
       job_title: jobPosting.job_title,
+      applicantCount: applicantCount,
     });
   } catch (error) {
     next(errorHandler(550, "Error fetching applicants"));

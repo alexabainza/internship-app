@@ -30,7 +30,9 @@ const CompanyDashboard = () => {
       });
       const data = await response.json();
       if (data.success) {
-        setPostings(postings.filter((post) => post._id !== postingId));
+        setPostings((prevPostings) =>
+          prevPostings.filter((post) => post._id !== postingId)
+        );
       }
     } catch (error) {
       console.error("Error deleting posting:", error);

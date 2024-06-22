@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StepperContext } from "../../context/StepperContext";
+import { useSelector } from "react-redux";
 import { lightTheme } from "../../styles/theme";
 import {
   FaHollyBerry,
@@ -11,7 +12,10 @@ import {
   renderParagraphs,
   renderRequirements,
 } from "../../../../backend/utils/rendering";
+
 const PostingPreview = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const [companyData, setCompanyData] = useState({});
   const { userData } = useContext(StepperContext);
   let internshipTypeMessage = "";
   if (userData.academic_requirements && !userData.voluntary_internship) {
@@ -23,6 +27,21 @@ const PostingPreview = () => {
       "Accepting both academic requirements and voluntary internships";
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/company/${currentUser.company_username}`);
+        const data = await res.json();
+        if (data.success) {
+          setCompanyData(data.companyDetails);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="flex flex-col">
       <h1
@@ -32,7 +51,7 @@ const PostingPreview = () => {
         {userData.job_title}
       </h1>
       <h3 className="lg:text-xl md:text-lg sm:text-md text-md mb-4 mt-1">
-        <span className="font-medium">{userData.company_name}. </span>
+        <span className="font-medium">{companyData.company_name}. </span>
         {userData.specific_address}
       </h3>
       <div className="flex flex-col gap-2 mb-8">
@@ -92,7 +111,7 @@ const PostingPreview = () => {
         >
           About the Company
         </p>
-        {renderParagraphs(userData.company_description)}
+        {renderParagraphs(companyData.company_description)}
       </div>
     </div>
   );
