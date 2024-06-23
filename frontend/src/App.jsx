@@ -12,7 +12,6 @@ import UserDashboard from "./pages/intern-side/UserDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SetupCompany from "./pages/company-side/SetupCompany";
 import ApplicationsList from "./pages/intern-side/ApplicationsList";
-import ViewProfile from "./pages/intern-side/ViewProfile";
 import CompanyDashboard from "./pages/company-side/CompanyDashboard";
 import ApplicantsList from "./pages/company-side/ApplicantsList";
 import Applying from "./pages/intern-side/Applying";
@@ -26,16 +25,32 @@ function App() {
         <Navbar />
 
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/filter" element={<FilterAhead />} />
+          {/* AUTH */}
           <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/company-login" element={<LoginCompany />} />
+          <Route path="/setup" element={<SetupCompany />} />
+          <Route path="/register" element={<Register />} />
+          {/* NAVIGABLE BY ANYONE */}
+          <Route path="/filter" element={<FilterAhead />} />
           <Route path="/:company_name" element={<AboutCompany />} />
           <Route path="/results" element={<Results />} />
-          <Route path="/setup" element={<SetupCompany />} />
-          <Route path="/profile" element={<ViewProfile />} />
-          <Route path="/applications-list" element={<ApplicationsList />} />
-          <Route path="/application/:job_id" element={<Applying />} />
+          {/* USER */}
+          <Route
+            path="/applications-list"
+            element={
+              <ProtectedRoute
+                element={ApplicationsList}
+                allowedRoles={["Student"]}
+              />
+            }
+          />
+          <Route
+            path="/application/:job_id"
+            element={
+              <ProtectedRoute element={Applying} allowedRoles={["Student"]} />
+            }
+          />
           <Route
             path="/user-dashboard"
             element={
@@ -45,17 +60,36 @@ function App() {
               />
             }
           />
-          <Route path="/saved-jobs" element={<SavedJobs />} />
-          <Route path="/edit-company-profile" element={<UpdateCompany />} />
-          <Route path="/company-dashboard" element={<CompanyDashboard />} />
-          <Route path="/filter" element={<FilterAhead />} />{" "}
+          <Route
+            path="/saved-jobs"
+            element={
+              <ProtectedRoute element={SavedJobs} allowedRoles={["Student"]} />
+            }
+          />
+          <Route
+            path="/edit-company-profile"
+            element={
+              <ProtectedRoute
+                element={UpdateCompany}
+                allowedRoles={["Company"]}
+              />
+            }
+          />
+          <Route
+            path="/company-dashboard"
+            element={
+              <ProtectedRoute
+                element={CompanyDashboard}
+                allowedRoles={["Company"]}
+              />
+            }
+          />
           <Route
             path="/create-post"
             element={
               <ProtectedRoute element={CreatePost} allowedRoles={["Company"]} />
             }
           />
-          <Route path="/company-login" element={<LoginCompany />} />
           <Route
             path="/:job_id/applicants"
             element={

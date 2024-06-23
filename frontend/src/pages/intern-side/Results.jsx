@@ -12,11 +12,14 @@ import {
   renderRequirements,
 } from "../../../../backend/utils/rendering";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+
 const Results = () => {
   const [postings, setPostings] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]);
   const [saveMessage, setSaveMessage] = useState("");
+  const { currentUser } = useSelector((state) => state.user);
 
   let internshipTypeMessage = "";
   if (selectedJob) {
@@ -35,8 +38,15 @@ const Results = () => {
         "Accepting both academic requirements and voluntary internships";
     }
   }
-  const isJobSaved = selectedJob && savedJobs.includes(selectedJob._id);
+  const isJobSaved =
+    selectedJob &&
+    savedJobs.some((job) => {
+      return (
+        job.job_id._id === selectedJob._id && currentUser._id === job.user_id
+      );
+    });
 
+  console.log("isJobSaved:", isJobSaved);
   const handleSaveJob = async (job, action) => {
     console.log(action, " triggered");
     console.log("selected job id", selectedJob._id, "job id", job._id);

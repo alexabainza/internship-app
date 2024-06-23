@@ -3,6 +3,7 @@ import logo from "../../assets/Carbs.svg";
 import Divider from "../../components/Divider";
 import { Link } from "react-router-dom";
 import { SocialIcon } from "react-social-icons";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -17,6 +18,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errors, setErrors] = useState({});
+
   const { loading, error } = useSelector((state) => state.user);
 
   const toggleShowPassword = () => {
@@ -28,10 +32,28 @@ const Login = () => {
       ...formData,
       [e.target.id]: e.target.value,
     });
+    setErrorMessage("");
+    setErrors({
+      ...errors,
+      [e.target.id]: "",
+      message: "",
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = {};
+
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key]) {
+        newErrors[key] = `${key.replace(/_/g, " ")} is required`;
+      }
+    });
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
       dispatch(signInStart());
       const res = await fetch("/api/auth/login", {
@@ -44,6 +66,8 @@ const Login = () => {
       const data = await res.json();
       if (data.success === false) {
         dispatch(signInFailure(data.message));
+        newErrors.message = data.message;
+        setErrorMessage(data.message);
         return;
       }
       dispatch(signInSuccess(data));
@@ -53,7 +77,7 @@ const Login = () => {
     }
   };
   return (
-    <section className="lg:mt-12 md:mt-16 sm:mt-20 mt-20">
+    <section className="lg:pt-20 md:pt-16 sm:pt-20 pt-20 min-h-screen">
       <div className="flex flex-col items-center justify-center mx-auto">
         <div className=" lg:w-1/4 md:w-1/2 sm:w-full w-full bg-white rounded-lg py-4 shadow border-red-600">
           <div className="space-y-4 md:space-y-6 sm:p-8">
@@ -84,55 +108,44 @@ const Login = () => {
                   required=""
                   onChange={handleChange}
                 />
+                {errors.email && (
+                  <p className="text-red-700 text-sm">{errors.email}</p>
+                )}
               </div>
-              <div>
+              <div className="relative">
                 <label
                   htmlFor="password"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Password
+                  Company Password
                 </label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  id="password"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required=""
-                  onChange={handleChange}
-                />
-                <button
-                  type="button"
-                  onClick={toggleShowPassword}
-                  className="absolute inset-y-0 right-0 px-4 text-sm cursor-pointer focus:outline-none dark:text-white"
-                >
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    id="password"
+                    placeholder="••••••••"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required=""
+                    onChange={handleChange}
+                  />
                   {showPassword ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M8.305 6.307a5.003 5.003 0 00-7.07 0l1.687 1.687A3.993 3.993 0 014 8.305V X 0"
-                      />
-                    </svg>
+                    <FaEyeSlash
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                      onClick={toggleShowPassword}
+                      size={20}
+                    />
                   ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M3.855 5.16c0 3.624 2.895 6.48 6.143 6.48 3.248 0 6.143-2.856 6.143-6.48 0-3.624-2.895-6.48-6.143-6.48-3.248 0-6.143 2.856-6.143 6.48zM12 7.671a1 1 0 010 2.657h.793a1 1 0 100-2.657H12z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <FaEye
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                      onClick={toggleShowPassword}
+                      size={20}
+                    />
                   )}
-                </button>
+                  {errors.password && (
+                    <p className="text-red-700 text-sm">{errors.password}</p>
+                  )}
+                </div>
               </div>
               <div className="flex items-center justify-between my-1">
                 <div className="flex items-start"></div>
@@ -150,6 +163,9 @@ const Login = () => {
               >
                 Sign in
               </button>
+              {errorMessage && (
+                <p className="text-red-700 text-sm">{errorMessage}</p>
+              )}{" "}
               <Divider />
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
@@ -161,11 +177,6 @@ const Login = () => {
                 </Link>
               </p>
             </form>
-            <div className="flex flex-row gap-10 justify-center">
-              <SocialIcon network="facebook" />
-              <SocialIcon network="google" />
-              <SocialIcon network="linkedin" />
-            </div>
           </div>
         </div>
       </div>
