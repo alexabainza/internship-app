@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown } from "flowbite-react";
+import { lightTheme } from "../../styles/theme";
 import JobResults from "../../components/JobResults";
 import {
   FaHollyBerry,
@@ -11,16 +11,95 @@ import {
   renderParagraphs,
   renderRequirements,
 } from "../../../../backend/utils/rendering";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Results = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [postings, setPostings] = useState([]);
+  const [queryParams, setQueryParams] = useState({
+    searchTerm: "",
+    type: "all",
+    setup: "all",
+    sort_order: "createdAt",
+    order: "desc",
+  });
   const [selectedJob, setSelectedJob] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]);
   const [saveMessage, setSaveMessage] = useState("");
   const { currentUser } = useSelector((state) => state.user);
+  const sortOptions = [
+    { label: "A-Z", value: "alph_asc" },
+    { label: "Z-A", value: "alph_desc" },
+    { label: "Date Created (Ascending)", value: "createdAt_asc" },
+    { label: "Date Created (Descending)", value: "createdAt_desc" },
+  ];
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log(queryParams);
+    const urlParams = new URLSearchParams();
+    urlParams.set("searchTerm", queryParams.searchTerm);
+    urlParams.set("type", queryParams.type);
+    urlParams.set("setup", queryParams.setup);
+    urlParams.set("sort", queryParams.sort_order);
+    urlParams.set("order", queryParams.order);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    const typeFromUrl = urlParams.get("type");
+    const setupFromUrl = urlParams.get("setup");
+    const sortFromUrl = urlParams.get("sort");
+    const orderFromUrl = urlParams.get("order");
+
+    if (
+      searchTermFromUrl ||
+      typeFromUrl ||
+      setupFromUrl ||
+      sortFromUrl ||
+      orderFromUrl
+    ) {
+      setQueryParams({
+        searchTerm: searchTermFromUrl || "",
+        type: typeFromUrl || "all",
+        setup: setupFromUrl || "all",
+        sort: sortFromUrl || "createdAt",
+        order: orderFromUrl || "desc",
+      });
+    }
+    const fetchJobs = async () => {
+      setLoading(true);
+      const searchQuery = urlParams.toString();
+      const res = await fetch(`/api/posting/get?${searchQuery}`);
+      const data = await res.json();
+      setPostings(data);
+      setLoading(false);
+    };
+    fetchPostings();
+  }, [location.search]);
+  const handleChange = (e) => {
+    if (e.target.id === "paid" || e.target.id === "unpaid") {
+      setQueryParams({ ...queryParams, type: e.target.id });
+    } else if (
+      e.target.id === "remote" ||
+      e.target.id === "hybrid" ||
+      e.target.id === "onsite"
+    ) {
+      setQueryParams({ ...queryParams, setup: e.target.id });
+    } else if (e.target.id === "search") {
+      setQueryParams({ ...queryParams, searchTerm: e.target.value });
+    } else if (e.target.id === "sort_order") {
+      const sort = e.target.value.split("_")[0] || "createdAt";
+      const order = e.target.value.split("_")[1] || "desc";
+
+      setQueryParams({ ...queryParams, sort_order: sort, order });
+    }
+  };
   let internshipTypeMessage = "";
   if (selectedJob) {
     if (
@@ -38,6 +117,7 @@ const Results = () => {
         "Accepting both academic requirements and voluntary internships";
     }
   }
+
   const isJobSaved =
     selectedJob &&
     savedJobs.some((job) => {
@@ -45,8 +125,6 @@ const Results = () => {
         job.job_id._id === selectedJob._id && currentUser._id === job.user_id
       );
     });
-
-  console.log("isJobSaved:", isJobSaved);
   const handleSaveJob = async (job, action) => {
     console.log(action, " triggered");
     console.log("selected job id", selectedJob._id, "job id", job._id);
@@ -119,9 +197,13 @@ const Results = () => {
     fetchPostings();
   }, []);
   return (
-    <div className="pt-16 min-h-screen w-full flex lg:flex-row md:flex-row sm:flex-col flex-col">
-      <div className="pt-10 px-10 bg-white w-1/3 overflow-y-auto custom-scrollbar">
-        <form className="max-w-screen mx-auto" style={{ width: "100%" }}>
+    <div className="pt-16 min-h-screen w-full flex lg:flex-row md:flex-row sm:flex-row flex-col">
+      <div className="pt-10 px-10  bg-white w-1/3 overflow-y-auto custom-scrollbar">
+        <form
+          onSubmit={handleSearch}
+          className="max-w-screen mx-auto flex flex-col gap-1"
+          style={{ width: "100%" }}
+        >
           <div className="relative">
             <div
               className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
@@ -145,61 +227,123 @@ const Results = () => {
             </div>
             <input
               type="search"
-              id="default-search"
+              id="search"
+              onChange={handleChange}
               className="w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search for internships"
               required
               style={{ borderColor: "#30526A" }}
             />
           </div>
+          <div className="flex gap-6 border-2 px-4 py-2 rounded-md">
+            <p className="text-sm">Internship type</p>
+
+            <div className="flex items-center">
+              <input
+                id="paid"
+                onChange={handleChange}
+                type="radio"
+                value="paid"
+                name="internship_type"
+                className="w-3 h-3 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                htmlFor="default-radio-1"
+                className="ms-2 lg:text-md sm:text-sm text-xs font-regular dark:text-gray-300"
+              >
+                Paid
+              </label>
+            </div>
+            <div className="flex items-center ">
+              <input
+                id="unpaid"
+                onChange={handleChange}
+                type="radio"
+                value="unpaid"
+                name="internship_type"
+                className="w-3 h-3 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                htmlFor="default-radio-2"
+                className="ms-2 lg:text-md sm:text-sm text-xs font-regular dark:text-gray-300"
+              >
+                Unpaid
+              </label>
+            </div>
+          </div>
+          <div className="flex gap-5 border-2 px-4 py-2 rounded-md">
+            <div className="flex items-center ">
+              <input
+                id="remote"
+                onChange={handleChange}
+                type="radio"
+                value="remote"
+                name="internship_setup"
+                className="w-3 h-3 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                htmlFor="default-radio-1"
+                className="ms-2 lg:text-md sm:text-sm text-xs font-regular dark:text-gray-300"
+              >
+                Remote{" "}
+              </label>
+            </div>
+            <div className="flex items-center ">
+              <input
+                id="onsite"
+                onChange={handleChange}
+                type="radio"
+                value="onsite"
+                name="internship_setup"
+                className="w-3 h-3 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                htmlFor="default-radio-2"
+                className="ms-2 lg:text-md sm:text-sm text-xs font-regular dark:text-gray-300"
+              >
+                On-site{" "}
+              </label>
+            </div>
+            <div className="flex items-center ">
+              <input
+                id="hybrid"
+                onChange={handleChange}
+                type="radio"
+                value="hybrid"
+                name="internship_setup"
+                className="w-3 h-3 text-[#056480] bg-gray-100 border-[#056480] focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                htmlFor="default-radio-2"
+                className="ms-2 lg:text-md sm:text-sm text-xs font-regular dark:text-gray-300"
+              >
+                Hybrid
+              </label>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="font-semibold">Sort:</label>
+            <select
+              onChange={handleChange}
+              defaultValue={"created_at_desc"}
+              id="sort_order"
+              className="border rounded-lg py-1 px-2"
+            >
+              {sortOptions.map((opt) => (
+                <option value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex justify-end">
+            <button
+              className="px-6 py-2 rounded-md text-white bg-[#056480] hover:bg-[#3980b2]"
+              onClick={handleSearch}
+            >
+              Search
+            </button>
+          </div>
         </form>
-        <h3 className="text-2xl my-5">
-          Search results for{" "}
-          <span className="font-semibold">"internships"</span>
-        </h3>
 
-        <div className="flex flex-row gap-3">
-          <div className="flex flex-col gap-5 w-1/5">
-            <Dropdown
-              label="Sort by"
-              className="bg-white text-start"
-              dismissOnClick={false}
-              style={{
-                width: "100%",
-                backgroundColor: "white",
-                color: "gray",
-                borderColor: "#30526A",
-              }}
-            >
-              <Dropdown.Item>Category 1</Dropdown.Item>
-              <Dropdown.Item>Category 2</Dropdown.Item>
-            </Dropdown>
-          </div>
-          <div className="flex flex-col w-1/5">
-            <Dropdown
-              label="Within"
-              className="bg-white text-start"
-              dismissOnClick={false}
-              style={{
-                width: "100%",
-                backgroundColor: "white",
-                color: "gray",
-                borderColor: "#30526A",
-              }}
-            >
-              <Dropdown.Item>Category 1</Dropdown.Item>
-              <Dropdown.Item>Category 2</Dropdown.Item>
-            </Dropdown>
-          </div>
-
-          <label className="inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" className="sr-only peer" />
-            <div className="relative w-11 h-6 bg-gray-200  rounded-full  dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-            <span className="ms-3 font-medium text-gray-900 dark:text-gray-300 text-md">
-              Alerts on
-            </span>
-          </label>
-        </div>
         <div className="my-6 flex flex-col gap-4">
           {postings.map((posting) => (
             <JobResults

@@ -1,51 +1,107 @@
-import React, { useState } from "react";
-import logo from "../../assets/Carbs.svg";
-import Divider from "../../components/Divider";
-import { Link } from "react-router-dom";
-import { SocialIcon } from "react-social-icons";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { lightTheme } from "../../styles/theme";
+import Dropdown from "../../components/Dropdown";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { app } from "../../firebase";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Modal from "../../components/Modal";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import {
   signInStart,
   signInSuccess,
   signInFailure,
 } from "../../redux/user/userSlice";
-
-const Login = () => {
+const SetupCompany = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [file, setFile] = useState(undefined);
+  const [filePerc, setFilePerc] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState(false);
+  const [preview, setPreview] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [errors, setErrors] = useState({});
-
-  const { loading, error } = useSelector((state) => state.user);
-
+  const [showModal, setShowModal] = useState(false);
+  const [errors, setErrors] = useState({
+    company_name: "",
+    company_address: "",
+    industry: "",
+    company_size: "",
+    company_description: "",
+    company_logo: "",
+    company_email: "",
+    company_contact_no: "",
+    company_website: "",
+    company_username: "",
+    password: "",
+  });
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+  const fileInputRef = useRef(null);
+  const [userData, setUserData] = useState({
+    company_name: "",
+    company_address: "",
+    industry: "",
+    company_size: "",
+    company_description: "",
+    company_logo: "",
+    company_email: "",
+    company_contact_no: "",
+    company_website: "",
+    company_username: "",
+    password: "",
+  });
+
+  const industry = [
+    { label: "Advertising and Marketing", value: "1" },
+    { label: "Aerospace", value: "2" },
+    { label: "Agriculture", value: "3" },
+    { label: "Computer and Technology", value: "4" },
+    { label: "Construction", value: "5" },
+    { label: "Energy", value: "6" },
+    { label: "Entertainment", value: "7" },
+  ];
+
+  const companySize = [
+    { label: "0-10 employees", value: "1" },
+    { label: "11-50 employees", value: "2" },
+    { label: "51-100 employees", value: "3" },
+    { label: "101-500 employees", value: "4" },
+    { label: "500-1000 employees", value: "5" },
+    { label: "1000-5000 employees", value: "6" },
+    { label: "5000-10000 employees", value: "7" },
+    { label: "10000+ employees", value: "8" },
+  ];
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
-    setErrorMessage("");
-    setErrors({
-      ...errors,
-      [e.target.id]: "",
-      message: "",
-    });
+    const { name, value } = e.target;
+    setUserData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
+  };
+
+  const handleSelect = (name, option) => {
+    setUserData((prevData) => ({
+      ...prevData,
+      [name]: option.label,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-
-    Object.keys(formData).forEach((key) => {
-      if (!formData[key]) {
+    Object.keys(userData).forEach((key) => {
+      if (!userData[key]) {
         newErrors[key] = `${key.replace(/_/g, " ")} is required`;
       }
     });
@@ -53,138 +109,367 @@ const Login = () => {
       setErrors(newErrors);
       return;
     }
-
     try {
       dispatch(signInStart());
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/setup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(userData),
       });
       const data = await res.json();
       if (data.success === false) {
         dispatch(signInFailure(data.message));
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          message: data.message,
-        }));
-        setErrorMessage(data.message);
         return;
       }
-      dispatch(signInSuccess(data));
-      navigate("/results");
+      dispatch(signInSuccess({ ...data.companyDetails }));
+      setShowModal(true);
+      navigate("/company-dashboard");
     } catch (error) {
       dispatch(signInFailure(error.message));
-      setErrorMessage(error.message);
     }
+  };
+  useEffect(() => {
+    if (file) {
+      handleFileUpload(file);
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [file]);
+
+  const handleFileUpload = (file) => {
+    const storage = getStorage(app); //knows which storage we want to get the file from
+    const fileName = new Date().getTime() + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setFilePerc(Math.round(progress));
+      },
+      (error) => {
+        setFileUploadError(true);
+      },
+
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
+          setUserData((prevData) => ({
+            ...prevData,
+            company_logo: downloadURL,
+          }))
+        );
+      }
+    );
+  };
+  const handleRemoveImage = () => {
+    setFile(undefined);
+    setPreview("");
+    setUserData((prevData) => ({
+      ...prevData,
+      company_logo: "",
+    }));
+    fileInputRef.current.click();
   };
 
   return (
-    <section className="lg:pt-20 md:pt-16 sm:pt-20 pt-20 min-h-screen">
-      <div className="flex flex-col items-center justify-center mx-auto">
-        <div className="lg:w-1/4 md:w-1/2 sm:w-full w-full bg-white rounded-lg py-4 shadow border-red-600">
-          <div className="space-y-4 md:space-y-6 sm:p-8">
-            <div className="flex flex-col items-center justify-center ">
-              <img
-                className="flex items-center mr-2 h-15 w-15"
-                src={logo}
-                alt="logo"
-              />
-              <p className="text-center font-semibold leading-tight tracking-tight text-gray-900 text-xl">
-                Login first to continue
-              </p>
+    <div className="pt-28 min-h-screen shadow-xl pb-2 bg-white lg:px-16 md:px-8 sm:px-2 px-2 overflow-auto">
+      <p className="text-sm font-light text-gray-500 dark:text-gray-400 flex justify-end">
+        Already have an account?
+        <Link
+          to="/company-login"
+          className="font-medium text-primary-600 hover:underline dark:text-primary-500 ms-2"
+        >
+          Login here
+        </Link>
+      </p>
+      <h1 style={{ color: lightTheme.primary }} className="text-4xl font-bold">
+        Setup Company Profile
+      </h1>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <section>
+          <h3
+            className="font-semibold lg:text-xl sm:text-lg text-lg mt-4"
+            style={{ color: lightTheme.primary }}
+          >
+            Company Information
+          </h3>
+          <div className="flex flex-col">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+              Company Name
             </div>
-            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Your email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
-                  onChange={handleChange}
-                />
-                {errors.email && (
-                  <p className="text-red-700 text-sm">{errors.email}</p>
-                )}
-              </div>
-              <div className="relative">
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Company Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    id="password"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    onChange={handleChange}
-                  />
-                  {showPassword ? (
-                    <FaEyeSlash
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
-                      onClick={toggleShowPassword}
-                      size={20}
-                    />
-                  ) : (
-                    <FaEye
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
-                      onClick={toggleShowPassword}
-                      size={20}
-                    />
-                  )}
-                  {errors.password && (
-                    <p className="text-red-700 text-sm">{errors.password}</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center justify-between my-1">
-                <div className="flex items-start"></div>
-                <a
-                  href="#"
-                  className="text-blue-600 text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
-              <button
-                disabled={isLoading}
-                type="submit"
-                className="w-full my-0 text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Sign in
-              </button>
-              {errorMessage && (
-                <p className="text-red-700 text-sm">{errorMessage}</p>
-              )}
-              <Divider />
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
-                <Link
-                  to="/register"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Sign up
-                </Link>
-              </p>
-            </form>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData.company_name}
+                name="company_name"
+                placeholder="Company Name"
+                required
+                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800 bg-white"
+              />
+            </div>
+            {errors.company_name && (
+              <p className="text-red-500 text-xs mt-1">{errors.company_name}</p>
+            )}
           </div>
+          <div className="flex flex-col">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+              Company Address
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData.company_address}
+                name="company_address"
+                placeholder="Company Address"
+                required
+                className="p-1 px-2 appearance-none outline-none border-none w-full text-gray-800 bg-white"
+              />
+            </div>
+            {errors.company_address && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.company_address}
+              </p>
+            )}
+          </div>
+          <div className="flex gap-4">
+            <div className="flex flex-col w-full mt-2">
+              <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+                Logo
+              </div>
+              <div className="bg-white my-1 p-1 flex border rounded-md">
+                <input
+                  ref={fileInputRef}
+                  onChange={(e) => setFile(e.target.files[0])}
+                  type="file"
+                  id="myFile"
+                  name="filename"
+                  accept="image/*"
+                />
+              </div>
+              {preview && (
+                <div className="my-4">
+                  <p className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
+                    Logo Preview
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={preview}
+                      alt="Company Logo Preview"
+                      className="w-32 h-32 object-cover border rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current.click()}
+                      className="mt-2 text-white font-medium rounded-lg text-sm px-5 py-2.5"
+                      style={{ backgroundColor: lightTheme.secondary }}
+                    >
+                      Replace image
+                    </button>
+                  </div>
+                </div>
+              )}
+              {errors.company_logo && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.company_logo}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col mb-1">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
+              Industry
+            </div>
+            <Dropdown
+              options={industry}
+              onSelect={(option) => handleSelect("industry", option)}
+            />
+            {errors.industry && (
+              <p className="text-red-500 text-xs mt-1">{errors.industry}</p>
+            )}
+          </div>
+          <div className="flex flex-col mb-1">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase mb-1">
+              Company Size
+            </div>
+            <Dropdown
+              options={companySize}
+              onSelect={(option) => handleSelect("company_size", option)}
+            />
+            {errors.company_size && (
+              <p className="text-red-500 text-xs mt-1">{errors.company_size}</p>
+            )}
+          </div>
+        </section>
+        <section className="flex flex-col">
+          <h3
+            className="font-semibold lg:text-xl sm:text-lg text-lg mt-4"
+            style={{ color: lightTheme.primary }}
+          >
+            Company Profile
+          </h3>
+          <div className="flex gap-4">
+            <div className="flex flex-col w-full mt-2">
+              <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+                Company Description
+              </div>
+              <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+                <textarea
+                  onChange={handleChange}
+                  value={userData.company_description}
+                  name="company_description"
+                  placeholder="Enter company description here"
+                  required
+                  className="p-1 px-2 appearance-none border-none outline-none w-full text-gray-800"
+                  rows="6"
+                />
+              </div>
+              {errors.company_description && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.company_description}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+              Company Email
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData.company_email}
+                name="company_email"
+                placeholder="Company Email"
+                required
+                className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+              />
+            </div>
+            {errors.company_email && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.company_email}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+              Company Contact Number
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData.company_contact_no}
+                name="company_contact_no"
+                placeholder="Company Contact Number"
+                required
+                className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+              />
+            </div>
+            {errors.company_contact_no && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.company_contact_no}
+              </p>
+            )}
+          </div>
+          <div className="flex gap-4">
+            <div className="flex flex-col w-full ">
+              <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+                Website
+              </div>
+              <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+                <input
+                  onChange={handleChange}
+                  value={userData.company_website}
+                  name="company_website"
+                  placeholder="Enter company website here"
+                  required
+                  className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+                />
+              </div>
+              {errors.company_website && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.company_website}
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+        <section>
+          <h3
+            className="font-semibold lg:text-xl sm:text-lg text-lg mt-4"
+            style={{ color: lightTheme.primary }}
+          >
+            Company Credentials
+          </h3>
+          <div className="flex flex-col">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+              Username
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md">
+              <input
+                onChange={handleChange}
+                value={userData.company_username}
+                name="company_username"
+                placeholder="Username"
+                required
+                className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+              />
+            </div>
+            {errors.company_username && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.company_username}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col">
+            <div className="font-bold h-6 text-gray-500 text-xs leading-8 uppercase">
+              Password
+            </div>
+            <div className="bg-white my-1 p-1 flex border border-[#056480] rounded-md items-center">
+              <input
+                onChange={handleChange}
+                value={userData.password}
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Company Password"
+                required
+                className="bg-white p-1 px-2 appearance-none outline-none border-none w-full text-gray-800"
+              />
+              {showPassword ? (
+                <FaEyeSlash
+                  className="absolute right-20 cursor-pointer"
+                  onClick={toggleShowPassword}
+                  size={20}
+                />
+              ) : (
+                <FaEye
+                  className="absolute right-20 cursor-pointer"
+                  onClick={toggleShowPassword}
+                  size={20}
+                />
+              )}
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
+          </div>
+        </section>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="mt-4 text-white  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+            style={{ backgroundColor: lightTheme.secondary }}
+          >
+            Submit
+          </button>
         </div>
-      </div>
-    </section>
+      </form>
+      <Modal show={showModal} onClose={() => setShowModal(false)} />
+    </div>
   );
 };
 
-export default Login;
+export default SetupCompany;
